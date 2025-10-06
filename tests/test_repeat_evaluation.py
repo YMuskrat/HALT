@@ -51,3 +51,27 @@ def test_invalid_repeat_seeds_do_not_create_output(tmp_path, seeds):
     with pytest.raises(ConfigurationError, match='seeds'):
         evaluate_repeats(configuration(), output, seeds=seeds)
     assert not output.exists()
+
+
+def test_changed_dataset_and_interrupted_manifest_cannot_resume(tmp_path):
+    config = configuration()
+    dataset = tmp_path / 'dataset.jsonl'
+    dataset.write_bytes(Path(config.evaluation['dataset']).read_bytes())
+    config = replace(config, evaluation={**config.evaluation, 'dataset': str(dataset)})
+    output = tmp_path / 'runs'
+    evaluate_repeats(config, output, seeds=[1], backend_factory=ScriptedBackend)
+    checkpoint = (output / 'repeat-0000/checkpoint.jsonl').read_bytes()
+    dataset.write_bytes(dataset.read_bytes() + b'\n')
+    with pytest.raises(ConfigurationError, match='incompatible'):
+        evaluate_repeats(config, output, seeds=[1], backend_factory=ScriptedBackend)
+    assert (output / 'repeat-0000/checkpoint.jsonl').read_bytes() == checkpoint
+    (output / 'repeats.json').write_text('{incomplete')
+    with pytest.raises(ConfigurationError, match='invalid repeat manifest'):
+        evaluate_repeats(config, output, seeds=[1], backend_factory=ScriptedBackend)
+
+
+def test_unrelated_output_is_never_overwritten(tmp_path):
+    (tmp_path / 'notes.txt').write_text('keep me')
+    with pytest.raises(ConfigurationError, match='empty'):
+        evaluate_repeats(configuration(), tmp_path, seeds=[1])
+    assert (tmp_path / 'notes.txt').read_text() == 'keep me'
