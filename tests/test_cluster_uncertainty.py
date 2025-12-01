@@ -1,9 +1,9 @@
 import pytest
+from test_comparison_outputs import record
 
 from halt.errors import ConfigurationError
-from halt.evaluation.uncertainty import cluster_bootstrap
 from halt.evaluation import compare
-from test_comparison_outputs import record
+from halt.evaluation.uncertainty import cluster_bootstrap
 
 
 def test_question_intervals_are_opt_in_and_never_apply_to_adaptive_sessions():

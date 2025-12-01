@@ -8,7 +8,7 @@ import pytest
 from halt.backends import ScriptedBackend
 from halt.config import load_config
 from halt.errors import ConfigurationError
-from halt.evaluation.repeats import evaluate_repeats
+from halt.evaluation.repeats import evaluate_repeats, summarize_repeats
 
 
 def configuration():
@@ -29,6 +29,21 @@ def test_repeats_initialize_separate_sessions_and_resume_without_duplicate_recor
 
     summaries = evaluate_repeats(config, tmp_path, seeds=[2, 3], backend_factory=fresh_backend)
     assert len(summaries) == 2 and factories[0] is not factories[1]
+    combined = summarize_repeats(summaries, samples=20)
+    assert combined['seeds'] == [2, 3]
+    assert combined['experiment']['evidence_kind'] == 'simulated'
+    assert all(m['uncertainty_unit'] == 'independent_repeat' for m in combined['methods'])
+    with pytest.raises(ConfigurationError, match='distinct seed'):
+        summarize_repeats([summaries[0], summaries[0]])
+    incompatible = copy.deepcopy(summaries)
+    incompatible[1]['comparison_id'] = 'different'
+    with pytest.raises(ConfigurationError, match='incompatible'):
+        summarize_repeats(incompatible)
+    incomplete = copy.deepcopy(summaries)
+    incomplete[1]['methods'][0]['unpaired_sample_count'] = 1
+    report = summarize_repeats(incomplete)
+    method = next(m for m in report['methods'] if m['method_id'] == incomplete[1]['methods'][0]['method_id'])
+    assert method['paired_accuracy_ci95'] is None
     checkpoints = sorted(tmp_path.glob('repeat-*/checkpoint.jsonl'))
     original = [path.read_bytes() for path in checkpoints]
     session_ids = []
