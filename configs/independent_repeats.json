@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "backend": {"name": "scripted"},
+  "method": {"name": "refrain", "parameters": {"adaptive": true}},
+  "runtime": {"seed": 0, "capture": "none"},
+  "budget": {"max_reasoning_tokens": 64, "max_answer_tokens": 16, "max_probe_output_tokens": 32, "max_total_generated_tokens": 112, "max_probe_calls": 8},
+  "evaluation": {
+    "dataset": "../data/toy_mcq.jsonl",
+    "adapter": "mcq_jsonl",
+    "split": "development",
+    "data_revision": "original-toy-v1",
+    "baseline": "full_reasoning",
+    "bootstrap_samples": 100,
+    "resume": true,
+    "methods": [
+      {"name": "full_reasoning"},
+      {"name": "refrain", "parameters": {"adaptive": true}}
+    ]
+  }
+}
