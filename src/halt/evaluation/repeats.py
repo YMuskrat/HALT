@@ -59,6 +59,7 @@ def evaluate_repeats(config: ResolvedConfig, output_dir: str | Path, *, seeds: S
         repeated = replace(config, evaluation=settings, runtime={**config.runtime, "seed": seed})
         backend = backend_factory() if backend_factory else make_backend(repeated)
         summary = evaluate(repeated, root / f"repeat-{index:04d}", backend=backend)
+        summary["repeat_group_id"] = stable_hash(identity)
         summaries.append(summary)
     return summaries
 
@@ -73,10 +74,13 @@ def summarize_repeats(summaries: Sequence[dict[str, Any]], *, samples: int = 200
     if not summaries:
         raise ConfigurationError("at least one repeat summary is required")
     first = summaries[0]
+    if not first.get("repeat_group_id"):
+        raise ConfigurationError("summaries must come from evaluate_repeats with a shared repeat identity")
     expected = {method["method_id"] for method in first["methods"]}
     observed_seeds: set[int] = set()
     for summary in summaries:
-        if (summary["comparison_id"] != first["comparison_id"] or
+        if (summary.get("repeat_group_id") != first["repeat_group_id"] or
+                summary["comparison_id"] != first["comparison_id"] or
                 summary["baseline"] != first["baseline"] or
                 summary["experiment"] != first["experiment"]):
             raise ConfigurationError("repeat summaries describe incompatible experiments")

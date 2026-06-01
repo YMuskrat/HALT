@@ -23,7 +23,9 @@ a new output directory for a changed experiment. Concurrent writers to the same
 output directory are not supported. Preserve interrupted manifests for inspection
 rather than deleting them to force a resume.
 
-`summarize_repeats(summaries)` weights repeats equally and bootstraps whole-repeat
+`summarize_repeats(summaries)` accepts the summaries returned by `evaluate_repeats`,
+which carry a shared identity covering the exact method parameters and configuration.
+It weights repeats equally and bootstraps whole-repeat
 paired accuracy effects. It requires matching experiments/methods, distinct seeds,
 and fully paired observations for an interval. Failed answers remain failures.
 At least two repeats are required for an interval, but two is usually weak evidence.

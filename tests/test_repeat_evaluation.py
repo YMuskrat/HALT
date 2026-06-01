@@ -39,6 +39,10 @@ def test_repeats_initialize_separate_sessions_and_resume_without_duplicate_recor
     incompatible[1]['comparison_id'] = 'different'
     with pytest.raises(ConfigurationError, match='incompatible'):
         summarize_repeats(incompatible)
+    incompatible = copy.deepcopy(summaries)
+    incompatible[1]['repeat_group_id'] = 'different-method-parameters'
+    with pytest.raises(ConfigurationError, match='incompatible'):
+        summarize_repeats(incompatible)
     incomplete = copy.deepcopy(summaries)
     incomplete[1]['methods'][0]['unpaired_sample_count'] = 1
     report = summarize_repeats(incomplete)
