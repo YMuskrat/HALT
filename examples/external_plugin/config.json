@@ -1,0 +1,11 @@
+{
+  "backend": {
+    "name": "scripted"
+  },
+  "method": {
+    "name": "example_stopper",
+    "parameters": {
+      "boundaries": 1
+    }
+  }
+}

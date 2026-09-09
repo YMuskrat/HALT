@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halt-plugin-example-stopper"
+version = "0.1.0"
+description = "Example HALT method plugin; replace with your source-specific implementation"
+requires-python = ">=3.11"
+dependencies = ["halt-reasoning>=0.1.0rc1,<0.2"]
+
+[project.entry-points."halt.methods"]
+example_stopper = "halt_plugin_example_stopper:ExampleStopper"
+
+[tool.setuptools.packages.find]
+where = ["src"]

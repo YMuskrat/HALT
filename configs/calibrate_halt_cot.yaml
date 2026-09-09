@@ -1,0 +1,7 @@
+{
+  "backend": {"name": "scripted"},
+  "method": {"name": "halt_cot", "parameters": {"entropy_unit": "bits", "consecutive": 1}},
+  "budget": {"max_reasoning_tokens": 64, "max_answer_tokens": 16, "max_probe_output_tokens": 32, "max_total_generated_tokens": 112, "max_probe_calls": 8},
+  "evaluation": {"dataset": "../data/toy_calibration_mcq.jsonl", "adapter": "mcq_jsonl", "split": "calibration", "data_revision": "original-toy-calibration-v1", "bootstrap_samples": 500},
+  "calibration": {"recipe_frozen": true, "parameter_grid": {"threshold": [0.1, 0.6, 1.2]}, "accuracy_tolerance": 0.0, "objective": "mean_total_generated_tokens"}
+}

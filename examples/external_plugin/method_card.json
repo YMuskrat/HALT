@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "method_id": "example_stopper",
+  "plugin_api_version": "1",
+  "title": "Original boundary-stop example",
+  "authors": [],
+  "citation": null,
+  "source_revision": null,
+  "source_relationship": "original_demo",
+  "implementation_status": "functional_demo",
+  "verification": [
+    "scripted_fixture"
+  ],
+  "limitations": [
+    "Replace the demo algorithm and fill source attribution before claiming research fidelity."
+  ]
+}

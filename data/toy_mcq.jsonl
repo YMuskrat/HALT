@@ -1,0 +1,6 @@
+{"id":"apples","question":"A shop has 12 apples and sells 5. How many remain?","choices":{"A":"5","B":"6","C":"7","D":"8"},"answer":"C"}
+{"id":"double","question":"What is twice 4?","choices":{"A":"6","B":"7","C":"8","D":"9"},"answer":"C"}
+{"id":"sides","question":"How many sides does a triangle have?","choices":{"A":"3","B":"4","C":"5","D":"6"},"answer":"A"}
+{"id":"divide","question":"What is 18 divided by 3?","choices":{"A":"3","B":"4","C":"5","D":"6"},"answer":"D"}
+{"id":"minutes","question":"How many minutes are in half an hour?","choices":{"A":"15","B":"30","C":"45","D":"60"},"answer":"B"}
+{"id":"addition","question":"What is 3 plus 4?","choices":{"A":"5","B":"6","C":"7","D":"8"},"answer":"C"}

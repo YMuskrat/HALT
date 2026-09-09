@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "backend": {"name": "scripted"},
+  "method": {"name": "halt_cot", "parameters": {"threshold": 0.6, "entropy_unit": "bits", "consecutive": 1}},
+  "budget": {"max_reasoning_tokens": 64, "max_answer_tokens": 16, "max_probe_output_tokens": 32, "max_total_generated_tokens": 112, "max_probe_calls": 8},
+  "evaluation": {"dataset": "../data/toy_mcq.jsonl", "adapter": "mcq_jsonl", "split": "development", "data_revision": "original-toy-v1", "baseline": "full_reasoning", "bootstrap_samples": 500, "resume": true,
+    "methods": [{"name": "full_reasoning"}, {"name": "fixed_reasoning_budget", "parameters": {"tokens": 4}}, {"name": "fixed_reasoning_budget", "parameters": {"tokens": 8}}, {"name": "immediate_answer"}, {"name": "halt_cot", "parameters": {"threshold": 0.6, "consecutive": 1}}, {"name": "thinkbrake"}, {"name": "answer_convergence", "parameters": {"max_probe_tokens": 8}}, {"name": "deer", "parameters": {"max_probe_tokens": 8}}]}
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "reasoning": [
+    "One",
+    ".",
+    "\n\n",
+    "Two",
+    ".",
+    "\n\n"
+  ],
+  "expected_reasoning_position": 3
+}
