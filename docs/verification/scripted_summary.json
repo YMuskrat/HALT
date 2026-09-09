@@ -1,0 +1,880 @@
+{
+  "schema_version": "1.0",
+  "baseline": "full_reasoning",
+  "methods": [
+    {
+      "method_id": "full_reasoning",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 1.0,
+      "budget_limited_rate": 0.0,
+      "stop_reasons": {
+        "natural_reasoning_end": 6
+      },
+      "stop_positions": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "full_reasoning",
+        "variant": "baseline",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": []
+        },
+        "boundary": {
+          "name": "blank_line",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": false,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 12.0,
+      "total_reasoning_tokens": 72,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 14.0,
+      "total_total_generated_tokens": 84,
+      "mean_input_tokens": 433.5,
+      "total_input_tokens": 2601,
+      "mean_forced_context_tokens": 0.0,
+      "total_forced_context_tokens": 0,
+      "mean_probe_calls": 0.0,
+      "total_probe_calls": 0,
+      "mean_recomputed_prefix_tokens": 410.6666666666667,
+      "total_recomputed_prefix_tokens": 2464,
+      "mean_scored_tokens": 0.0,
+      "total_scored_tokens": 0,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 15.0,
+      "total_forward_calls": 90,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.0026666666659972784,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0026666666659972784
+      },
+      "mean_latency_seconds": 0.0026666666659972784,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.0,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "fixed_reasoning_budget_4",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 0.0,
+      "budget_limited_rate": 1.0,
+      "stop_reasons": {
+        "fixed_reasoning_budget": 6
+      },
+      "stop_positions": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "fixed_reasoning_budget",
+        "variant": "baseline",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": []
+        },
+        "boundary": {
+          "name": "blank_line",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": false,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 4.0,
+      "total_reasoning_tokens": 24,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 6.0,
+      "total_total_generated_tokens": 36,
+      "mean_input_tokens": 174.83333333333334,
+      "total_input_tokens": 1049,
+      "mean_forced_context_tokens": 1.0,
+      "total_forced_context_tokens": 6,
+      "mean_probe_calls": 0.0,
+      "total_probe_calls": 0,
+      "mean_recomputed_prefix_tokens": 152.0,
+      "total_recomputed_prefix_tokens": 912,
+      "mean_scored_tokens": 0.0,
+      "total_scored_tokens": 0,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 7.0,
+      "total_forward_calls": 42,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.0,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0
+      },
+      "mean_latency_seconds": 0.0,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.5714285714285714,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "fixed_reasoning_budget_8",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 0.0,
+      "budget_limited_rate": 1.0,
+      "stop_reasons": {
+        "fixed_reasoning_budget": 6
+      },
+      "stop_positions": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "fixed_reasoning_budget",
+        "variant": "baseline",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": []
+        },
+        "boundary": {
+          "name": "blank_line",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": false,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 8.0,
+      "total_reasoning_tokens": 48,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 10.0,
+      "total_total_generated_tokens": 60,
+      "mean_input_tokens": 296.1666666666667,
+      "total_input_tokens": 1777,
+      "mean_forced_context_tokens": 1.0,
+      "total_forced_context_tokens": 6,
+      "mean_probe_calls": 0.0,
+      "total_probe_calls": 0,
+      "mean_recomputed_prefix_tokens": 273.3333333333333,
+      "total_recomputed_prefix_tokens": 1640,
+      "mean_scored_tokens": 0.0,
+      "total_scored_tokens": 0,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 11.0,
+      "total_forward_calls": 66,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.0024999999999029874,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0
+      },
+      "mean_latency_seconds": 0.0024999999999029874,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.2857142857142857,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "immediate_answer",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 0.0,
+      "budget_limited_rate": 0.0,
+      "stop_reasons": {
+        "immediate_answer": 6
+      },
+      "stop_positions": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "immediate_answer",
+        "variant": "baseline",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": []
+        },
+        "boundary": {
+          "name": "blank_line",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": false,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 0.0,
+      "total_reasoning_tokens": 0,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 2.0,
+      "total_total_generated_tokens": 12,
+      "mean_input_tokens": 69.5,
+      "total_input_tokens": 417,
+      "mean_forced_context_tokens": 1.0,
+      "total_forced_context_tokens": 6,
+      "mean_probe_calls": 0.0,
+      "total_probe_calls": 0,
+      "mean_recomputed_prefix_tokens": 46.666666666666664,
+      "total_recomputed_prefix_tokens": 280,
+      "mean_scored_tokens": 0.0,
+      "total_scored_tokens": 0,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 3.0,
+      "total_forward_calls": 18,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.002666666667209938,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0
+      },
+      "mean_latency_seconds": 0.002666666667209938,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.8571428571428572,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "halt_cot",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 0.0,
+      "budget_limited_rate": 0.0,
+      "stop_reasons": {
+        "candidate_entropy": 6
+      },
+      "stop_positions": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "halt_cot",
+        "variant": "halt_cot_qwen_common_v1",
+        "requirements": {
+          "capabilities": [
+            "exact_prefix_resume",
+            "prefix_branch",
+            "selected_token_scores",
+            "step_boundaries",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": []
+        },
+        "boundary": {
+          "name": "newline",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": true,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": [
+          "candidate_next_token"
+        ]
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 7.0,
+      "total_reasoning_tokens": 42,
+      "mean_answer_tokens": 0.0,
+      "total_answer_tokens": 0,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 7.0,
+      "total_total_generated_tokens": 42,
+      "mean_input_tokens": 233.5,
+      "total_input_tokens": 1401,
+      "mean_forced_context_tokens": 0.0,
+      "total_forced_context_tokens": 0,
+      "mean_probe_calls": 1.0,
+      "total_probe_calls": 6,
+      "mean_recomputed_prefix_tokens": 210.66666666666666,
+      "total_recomputed_prefix_tokens": 1264,
+      "mean_scored_tokens": 4.0,
+      "total_scored_tokens": 24,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 9.0,
+      "total_forward_calls": 54,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.0,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0
+      },
+      "mean_latency_seconds": 0.0,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.5,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "thinkbrake",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 0.0,
+      "budget_limited_rate": 0.0,
+      "stop_reasons": {
+        "thinkbrake_margin": 6
+      },
+      "stop_positions": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "thinkbrake",
+        "variant": "thinkbrake_v1_newline_raw",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "exact_prefix_resume",
+            "prefix_branch",
+            "step_boundaries",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [
+            [
+              "full_vocab_scores",
+              "selected_token_scores"
+            ]
+          ],
+          "allow_emulated": true,
+          "profiles": [
+            "qwen3_thinking",
+            "scripted"
+          ]
+        },
+        "boundary": {
+          "name": "newline",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": false,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 8.0,
+      "total_reasoning_tokens": 48,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 10.0,
+      "total_total_generated_tokens": 60,
+      "mean_input_tokens": 356.8333333333333,
+      "total_input_tokens": 2141,
+      "mean_forced_context_tokens": 1.0,
+      "total_forced_context_tokens": 6,
+      "mean_probe_calls": 2.0,
+      "total_probe_calls": 12,
+      "mean_recomputed_prefix_tokens": 334.0,
+      "total_recomputed_prefix_tokens": 2004,
+      "mean_scored_tokens": 2.0,
+      "total_scored_tokens": 12,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 13.0,
+      "total_forward_calls": 78,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.002666666667209938,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0
+      },
+      "mean_latency_seconds": 0.002666666667209938,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.2857142857142857,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "answer_convergence",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 1.0,
+      "budget_limited_rate": 0.0,
+      "stop_reasons": {
+        "natural_reasoning_end": 6
+      },
+      "stop_positions": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "answer_convergence",
+        "variant": "answer_consistency_sentence_common_v1",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "exact_prefix_resume",
+            "prefix_branch",
+            "step_boundaries",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": []
+        },
+        "boundary": {
+          "name": "sentence",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": true,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 12.0,
+      "total_reasoning_tokens": 72,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 4.0,
+      "total_probe_output_tokens": 24,
+      "mean_total_generated_tokens": 18.0,
+      "total_total_generated_tokens": 108,
+      "mean_input_tokens": 495.1666666666667,
+      "total_input_tokens": 2971,
+      "mean_forced_context_tokens": 0.0,
+      "total_forced_context_tokens": 0,
+      "mean_probe_calls": 2.0,
+      "total_probe_calls": 12,
+      "mean_recomputed_prefix_tokens": 472.3333333333333,
+      "total_recomputed_prefix_tokens": 2834,
+      "mean_scored_tokens": 0.0,
+      "total_scored_tokens": 0,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 17.0,
+      "total_forward_calls": 102,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.005333333331994557,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0
+      },
+      "mean_latency_seconds": 0.005333333331994557,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": -0.2857142857142858,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    },
+    {
+      "method_id": "deer",
+      "sample_count": 6,
+      "accuracy": 0.5,
+      "parse_failure_rate": 0.0,
+      "incomplete_answer_rate": 0.0,
+      "abstention_rate": 0.0,
+      "natural_completion_rate": 1.0,
+      "budget_limited_rate": 0.0,
+      "stop_reasons": {
+        "natural_reasoning_end": 6
+      },
+      "stop_positions": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ],
+      "evidence_kind": [
+        "simulated"
+      ],
+      "recipe": {
+        "method_id": "deer",
+        "variant": "deer_qwen3_greedy_v1",
+        "requirements": {
+          "capabilities": [
+            "answer_transition",
+            "exact_prefix_resume",
+            "prefix_branch",
+            "sequence_scoring",
+            "token_stream",
+            "visible_reasoning"
+          ],
+          "alternatives": [],
+          "allow_emulated": true,
+          "profiles": [
+            "qwen3_thinking",
+            "scripted"
+          ]
+        },
+        "boundary": {
+          "name": "token",
+          "version": "1",
+          "chunk_tokens": 32
+        },
+        "finalization_recipe": "halt_default_v1",
+        "probe_failure_policy": "continue",
+        "can_return_answer": false,
+        "can_abstain": false,
+        "implementation_status": "functional",
+        "source_relationship": "independent_implementation",
+        "recipe": "common_protocol",
+        "verification": [
+          "component_fixtures"
+        ],
+        "api_version": "1",
+        "signal_operations": []
+      },
+      "resources": {
+        "device": "none"
+      },
+      "batch_size": 1,
+      "concurrency": 1,
+      "peak_memory": null,
+      "peak_memory_measurement": "not measured",
+      "mean_reasoning_tokens": 12.0,
+      "total_reasoning_tokens": 72,
+      "mean_answer_tokens": 2.0,
+      "total_answer_tokens": 12,
+      "mean_probe_output_tokens": 0.0,
+      "total_probe_output_tokens": 0,
+      "mean_total_generated_tokens": 14.0,
+      "total_total_generated_tokens": 84,
+      "mean_input_tokens": 433.5,
+      "total_input_tokens": 2601,
+      "mean_forced_context_tokens": 0.0,
+      "total_forced_context_tokens": 0,
+      "mean_probe_calls": 0.0,
+      "total_probe_calls": 0,
+      "mean_recomputed_prefix_tokens": 410.6666666666667,
+      "total_recomputed_prefix_tokens": 2464,
+      "mean_scored_tokens": 0.0,
+      "total_scored_tokens": 0,
+      "mean_embedding_calls": 0.0,
+      "total_embedding_calls": 0,
+      "mean_forward_calls": 15.0,
+      "total_forward_calls": 90,
+      "mean_component_seconds": {
+        "controller": 0.0,
+        "end_to_end": 0.0026666666659972784,
+        "finalization": 0.0,
+        "prefill": 0.0,
+        "probes": 0.0,
+        "reasoning": 0.0026666666659972784
+      },
+      "mean_latency_seconds": 0.0026666666659972784,
+      "timing_scope": "simulated_runtime",
+      "paired_sample_count": 6,
+      "paired_accuracy_difference": 0.0,
+      "correct_to_wrong": 0,
+      "wrong_to_correct": 0,
+      "adaptive_session": false,
+      "paired_accuracy_ci95": [
+        0.0,
+        0.0
+      ],
+      "generated_reduction_baseline_denominator": 84,
+      "aggregate_generated_token_reduction": 0.0,
+      "uncertainty_note": "Paired percentile bootstrap over examples; small samples may give uninformative intervals."
+    }
+  ],
+  "interpretation": "Original toy data and simulated runs demonstrate mechanics only. No general efficiency claim follows from this report."
+}

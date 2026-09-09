@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "python": "3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)]",
+  "halt_source_sha256": "5973b982acdbe8a3203cb72bdea3f79ebcf12e4eabe760848ba22f08ff621d1a",
+  "plugins": [
+    {
+      "method_id": "example_stopper",
+      "target": "halt_plugin_example_stopper:ExampleStopper",
+      "distribution": "halt-plugin-example-stopper",
+      "version": "0.1.0"
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "<workspace>\\.venv\\Scripts\\python.exe",
+        "-m",
+        "build",
+        "--no-isolation"
+      ],
+      "exit_code": 0,
+      "seconds": 9.390999999995984,
+      "stdout": "st.win-amd64\\wheel\\.\\halt\\methods\ncopying build\\lib\\halt\\methods\\_research.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\methods\ncopying build\\lib\\halt\\methods\\__init__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\methods\ncreating build\\bdist.win-amd64\\wheel\\halt\\profiles\ncopying build\\lib\\halt\\profiles\\qwen3.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\profiles\ncopying build\\lib\\halt\\profiles\\__init__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\profiles\ncopying build\\lib\\halt\\provenance.py -> build\\bdist.win-amd64\\wheel\\.\\halt\ncopying build\\lib\\halt\\py.typed -> build\\bdist.win-amd64\\wheel\\.\\halt\ncopying build\\lib\\halt\\registry.py -> build\\bdist.win-amd64\\wheel\\.\\halt\ncreating build\\bdist.win-amd64\\wheel\\halt\\resources\ncreating build\\bdist.win-amd64\\wheel\\halt\\resources\\method_cards\ncopying build\\lib\\halt\\resources\\method_cards\\answer_convergence.json -> build\\bdist.win-amd64\\wheel\\.\\halt\\resources\\method_cards\ncopying build\\lib\\halt\\resources\\method_cards\\deer.json -> build\\bdist.win-amd64\\wheel\\.\\halt\\resources\\method_cards\ncopying build\\lib\\halt\\resources\\method_cards\\halt_cot.json -> build\\bdist.win-amd64\\wheel\\.\\halt\\resources\\method_cards\ncopying build\\lib\\halt\\resources\\method_cards\\refrain.json -> build\\bdist.win-amd64\\wheel\\.\\halt\\resources\\method_cards\ncopying build\\lib\\halt\\resources\\method_cards\\thinkbrake.json -> build\\bdist.win-amd64\\wheel\\.\\halt\\resources\\method_cards\ncreating build\\bdist.win-amd64\\wheel\\halt\\runtime\ncopying build\\lib\\halt\\runtime\\boundaries.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\runtime\ncopying build\\lib\\halt\\runtime\\budgets.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\runtime\ncopying build\\lib\\halt\\runtime\\engine.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\runtime\ncopying build\\lib\\halt\\runtime\\__init__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\runtime\ncopying build\\lib\\halt\\sdk.py -> build\\bdist.win-amd64\\wheel\\.\\halt\ncopying build\\lib\\halt\\session.py -> build\\bdist.win-amd64\\wheel\\.\\halt\ncreating build\\bdist.win-amd64\\wheel\\halt\\signals\ncopying build\\lib\\halt\\signals\\embeddings.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\signals\ncopying build\\lib\\halt\\signals\\__init__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\signals\ncreating build\\bdist.win-amd64\\wheel\\halt\\tasks\ncopying build\\lib\\halt\\tasks\\__init__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\\tasks\ncopying build\\lib\\halt\\types.py -> build\\bdist.win-amd64\\wheel\\.\\halt\ncopying build\\lib\\halt\\__init__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\ncopying build\\lib\\halt\\__main__.py -> build\\bdist.win-amd64\\wheel\\.\\halt\nrunning install_egg_info\nCopying src\\halt_reasoning.egg-info to build\\bdist.win-amd64\\wheel\\.\\halt_reasoning-0.1.0rc1-py3.12.egg-info\nrunning install_scripts\ncreating build\\bdist.win-amd64\\wheel\\halt_reasoning-0.1.0rc1.dist-info\\WHEEL\ncreating '<workspace>\\\\dist\\\\.tmp-x2o9htlu\\\\halt_reasoning-0.1.0rc1-py3-none-any.whl' and adding 'build\\\\bdist.win-amd64\\\\wheel' to it\nadding 'halt/__init__.py'\nadding 'halt/__main__.py'\nadding 'halt/api.py'\nadding 'halt/cli.py'\nadding 'halt/config.py'\nadding 'halt/errors.py'\nadding 'halt/provenance.py'\nadding 'halt/py.typed'\nadding 'halt/registry.py'\nadding 'halt/sdk.py'\nadding 'halt/session.py'\nadding 'halt/types.py'\nadding 'halt/backends/__init__.py'\nadding 'halt/backends/base.py'\nadding 'halt/backends/replay.py'\nadding 'halt/backends/scripted.py'\nadding 'halt/backends/transformers.py'\nadding 'halt/evaluation/__init__.py'\nadding 'halt/evaluation/calibration.py'\nadding 'halt/evaluation/datasets.py'\nadding 'halt/evaluation/evaluator.py'\nadding 'halt/evaluation/huggingface.py'\nadding 'halt/evaluation/reporting.py'\nadding 'halt/methods/__init__.py'\nadding 'halt/methods/_research.py'\nadding 'halt/methods/answer_convergence.py'\nadding 'halt/methods/base.py'\nadding 'halt/methods/baselines.py'\nadding 'halt/methods/deer.py'\nadding 'halt/methods/halt_cot.py'\nadding 'halt/methods/refrain.py'\nadding 'halt/methods/thinkbrake.py'\nadding 'halt/profiles/__init__.py'\nadding 'halt/profiles/qwen3.py'\nadding 'halt/resources/method_cards/answer_convergence.json'\nadding 'halt/resources/method_cards/deer.json'\nadding 'halt/resources/method_cards/halt_cot.json'\nadding 'halt/resources/method_cards/refrain.json'\nadding 'halt/resources/method_cards/thinkbrake.json'\nadding 'halt/runtime/__init__.py'\nadding 'halt/runtime/boundaries.py'\nadding 'halt/runtime/budgets.py'\nadding 'halt/runtime/engine.py'\nadding 'halt/signals/__init__.py'\nadding 'halt/signals/embeddings.py'\nadding 'halt/tasks/__init__.py'\nadding 'halt_reasoning-0.1.0rc1.dist-info/licenses/LICENSE'\nadding 'halt_reasoning-0.1.0rc1.dist-info/licenses/THIRD_PARTY_NOTICES.md'\nadding 'halt_reasoning-0.1.0rc1.dist-info/METADATA'\nadding 'halt_reasoning-0.1.0rc1.dist-info/WHEEL'\nadding 'halt_reasoning-0.1.0rc1.dist-info/entry_points.txt'\nadding 'halt_reasoning-0.1.0rc1.dist-info/top_level.txt'\nadding 'halt_reasoning-0.1.0rc1.dist-info/RECORD'\nremoving build\\bdist.win-amd64\\wheel\nSuccessfully built halt_reasoning-0.1.0rc1.tar.gz and halt_reasoning-0.1.0rc1-py3-none-any.whl\n",
+      "stderr": "* Getting build dependencies for sdist...\nwarning: no files found matching '*.json' under directory 'tests'\nno previously-included directories found matching '.source_audit'\nno previously-included directories found matching '.model-cache'\nno previously-included directories found matching 'runs'\n* Building sdist...\nwarning: no files found matching '*.json' under directory 'tests'\nno previously-included directories found matching '.source_audit'\nno previously-included directories found matching '.model-cache'\nno previously-included directories found matching 'runs'\n* Building wheel from sdist\n* Getting build dependencies for wheel...\nwarning: no files found matching '*.json' under directory 'tests'\nno previously-included directories found matching '.source_audit'\nno previously-included directories found matching '.model-cache'\nno previously-included directories found matching 'runs'\nwarning: no previously-included files found matching 'docs\\verification\\release_checks.json'\n* Building wheel...\nwarning: no files found matching '*.json' under directory 'tests'\nno previously-included directories found matching '.source_audit'\nno previously-included directories found matching '.model-cache'\nno previously-included directories found matching 'runs'\nwarning: no previously-included files found matching 'docs\\verification\\release_checks.json'\n"
+    },
+    {
+      "command": [
+        "<workspace>\\.venv\\Scripts\\python.exe",
+        "-m",
+        "twine",
+        "check",
+        "dist\\halt_reasoning-0.1.0rc1-py3-none-any.whl",
+        "dist\\halt_reasoning-0.1.0rc1.tar.gz"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8440000000045984,
+      "stdout": "Checking dist\\halt_reasoning-0.1.0rc1-py3-none-any.whl: PASSED\nChecking dist\\halt_reasoning-0.1.0rc1.tar.gz: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "<workspace>\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "examples/external_plugin",
+        "--no-build-isolation",
+        "--no-deps",
+        "--wheel-dir",
+        "dist/plugins"
+      ],
+      "exit_code": 0,
+      "seconds": 3.5,
+      "stdout": "Processing .\\examples\\external_plugin\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: halt-plugin-example-stopper\n  Building wheel for halt-plugin-example-stopper (pyproject.toml): started\n  Building wheel for halt-plugin-example-stopper (pyproject.toml): finished with status 'done'\n  Created wheel for halt-plugin-example-stopper: filename=halt_plugin_example_stopper-0.1.0-py3-none-any.whl size=2282 sha256=3571df43798456fc93241a0db294bc2744235b5e1878ef3c699f59ef516f7f14\n  Stored in directory: <temp>\\pip-ephem-wheel-cache-el8vrf3o\\wheels\\33\\69\\21\\3457a92d548051c8221b486df397b079b772b09710b89e8d03\nSuccessfully built halt-plugin-example-stopper\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "<workspace>\\.venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        ".wheel-venv"
+      ],
+      "exit_code": 0,
+      "seconds": 3.2969999999986612,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".wheel-venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--force-reinstall",
+        "dist\\halt_reasoning-0.1.0rc1-py3-none-any.whl",
+        "dist\\plugins\\halt_plugin_example_stopper-0.1.0-py3-none-any.whl"
+      ],
+      "exit_code": 0,
+      "seconds": 2.7960000000020955,
+      "stdout": "Processing <workspace>\\dist\\halt_reasoning-0.1.0rc1-py3-none-any.whl\nProcessing <workspace>\\dist\\plugins\\halt_plugin_example_stopper-0.1.0-py3-none-any.whl\nInstalling collected packages: halt-reasoning, halt-plugin-example-stopper\n  Attempting uninstall: halt-reasoning\n    Found existing installation: halt-reasoning 0.1.0rc1\n    Uninstalling halt-reasoning-0.1.0rc1:\n      Successfully uninstalled halt-reasoning-0.1.0rc1\n  Attempting uninstall: halt-plugin-example-stopper\n    Found existing installation: halt-plugin-example-stopper 0.1.0\n    Uninstalling halt-plugin-example-stopper-0.1.0:\n      Successfully uninstalled halt-plugin-example-stopper-0.1.0\nSuccessfully installed halt-plugin-example-stopper-0.1.0 halt-reasoning-0.1.0rc1\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".wheel-venv\\Scripts\\python.exe",
+        "-c",
+        "import halt,sys; from halt.registry import MethodRegistry; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules; assert MethodRegistry().inspect('halt_cot')['method_card']['source_commit']; print(halt.__file__)"
+      ],
+      "exit_code": 0,
+      "seconds": 0.46899999999732245,
+      "stdout": "<workspace>\\.wheel-venv\\Lib\\site-packages\\halt\\__init__.py\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".wheel-venv\\Scripts\\python.exe",
+        "-m",
+        "halt",
+        "demo",
+        "--backend",
+        "scripted"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5780000000013388,
+      "stdout": "\"forced_context_tokens\": 1,\n        \"scored_tokens\": 0,\n        \"recomputed_prefix_tokens\": 0,\n        \"forward_calls\": 0,\n        \"sequence_lengths\": [\n          36\n        ],\n        \"embedding_calls\": 0,\n        \"duration_seconds\": 0.0,\n        \"status\": \"completed\",\n        \"role\": \"accepted\",\n        \"cached_input_tokens\": null,\n        \"provider_reported_tokens\": null\n      },\n      {\n        \"operation_id\": \"fa0060cf672c40f4beb6d75317e48fa8:op:11\",\n        \"parent_id\": \"fa0060cf672c40f4beb6d75317e48fa8\",\n        \"kind\": \"decode\",\n        \"phase\": \"answering\",\n        \"input_tokens\": 35,\n        \"generated_tokens\": 1,\n        \"forced_context_tokens\": 0,\n        \"scored_tokens\": 0,\n        \"recomputed_prefix_tokens\": 35,\n        \"forward_calls\": 1,\n        \"sequence_lengths\": [\n          35\n        ],\n        \"embedding_calls\": 0,\n        \"duration_seconds\": 0.0,\n        \"status\": \"completed\",\n        \"role\": \"accepted\",\n        \"cached_input_tokens\": null,\n        \"provider_reported_tokens\": null\n      },\n      {\n        \"operation_id\": \"fa0060cf672c40f4beb6d75317e48fa8:op:12\",\n        \"parent_id\": \"fa0060cf672c40f4beb6d75317e48fa8\",\n        \"kind\": \"decode\",\n        \"phase\": \"answering\",\n        \"input_tokens\": 36,\n        \"generated_tokens\": 1,\n        \"forced_context_tokens\": 0,\n        \"scored_tokens\": 0,\n        \"recomputed_prefix_tokens\": 36,\n        \"forward_calls\": 1,\n        \"sequence_lengths\": [\n          36\n        ],\n        \"embedding_calls\": 0,\n        \"duration_seconds\": 0.0,\n        \"status\": \"completed\",\n        \"role\": \"accepted\",\n        \"cached_input_tokens\": null,\n        \"provider_reported_tokens\": null\n      }\n    ],\n    \"measurement\": \"observed\",\n    \"billed_cost\": null,\n    \"unknown_fields\": [\n      \"billed_cost\",\n      \"cached_input_tokens\"\n    ],\n    \"schema_version\": \"1.0\"\n  },\n  \"durations\": {\n    \"prefill\": 0.0,\n    \"reasoning\": 0.0,\n    \"probes\": 0.0,\n    \"finalization\": 0.0,\n    \"controller\": 0.0,\n    \"end_to_end\": 0.0\n  },\n  \"provenance\": {\n    \"halt_version\": \"0.1.0rc1\",\n    \"halt_source_sha256\": \"5973b982acdbe8a3203cb72bdea3f79ebcf12e4eabe760848ba22f08ff621d1a\",\n    \"plugins\": [\n      {\n        \"method_id\": \"example_stopper\",\n        \"target\": \"halt_plugin_example_stopper:ExampleStopper\",\n        \"distribution\": \"halt-plugin-example-stopper\",\n        \"version\": \"0.1.0\"\n      }\n    ],\n    \"method\": {\n      \"method_id\": \"demo_probe\",\n      \"variant\": \"original_demo\",\n      \"requirements\": {\n        \"capabilities\": [\n          \"answer_transition\",\n          \"token_stream\",\n          \"visible_reasoning\"\n        ],\n        \"alternatives\": [],\n        \"allow_emulated\": true,\n        \"profiles\": []\n      },\n      \"boundary\": {\n        \"name\": \"blank_line\",\n        \"version\": \"1\",\n        \"chunk_tokens\": 32\n      },\n      \"finalization_recipe\": \"halt_default_v1\",\n      \"probe_failure_policy\": \"continue\",\n      \"can_return_answer\": false,\n      \"can_abstain\": false,\n      \"implementation_status\": \"functional\",\n      \"source_relationship\": \"independent_implementation\",\n      \"recipe\": \"common_protocol\",\n      \"verification\": [\n        \"component_fixtures\"\n      ],\n      \"api_version\": \"1\",\n      \"signal_operations\": []\n    },\n    \"configuration\": {},\n    \"backend\": {\n      \"name\": \"scripted\",\n      \"model_id\": \"scripted\",\n      \"model_revision\": \"scripted-v1\",\n      \"tokenizer_id\": \"scripted\",\n      \"tokenizer_revision\": \"scripted-v1\",\n      \"profile\": \"qwen3_thinking\",\n      \"capabilities\": [\n        \"answer_transition\",\n        \"cancel_request\",\n        \"embeddings\",\n        \"exact_prefix_resume\",\n        \"full_vocab_scores\",\n        \"prefix_branch\",\n        \"selected_token_scores\",\n        \"sequence_scoring\",\n        \"step_boundaries\",\n        \"token_stream\",\n        \"visible_reasoning\"\n      ],\n      \"execution_mode\": \"simulated\",\n      \"emulated_capabilities\": [],\n      \"versions\": {},\n      \"hardware\": {\n        \"device\": \"none\"\n      },\n      \"execution_settings\": {}\n    },\n    \"seed\": 0,\n    \"probe_seed\": 25214903917,\n    \"probe_invocation_seeds\": [\n      {\n        \"request_id\": \"demo-score\",\n        \"seed\": 129629367085881898\n      }\n    ],\n    \"probe_seed_policy\": \"settings_and_invocation_without_run_uuid_v1\",\n    \"prompt_hash\": \"4043c92c8d9020afc07386d8f1bac069753bc4a7a46f5ea6214e7f788e7f8916\",\n    \"task_hash\": \"2a3e2410a5fa78c75240cd7cf2c6d095f0bc044e4c0bfceb6f77482d3bc57815\",\n    \"budget\": {\n      \"max_reasoning_tokens\": 64,\n      \"max_answer_tokens\": 16,\n      \"max_probe_output_tokens\": 16,\n      \"max_total_generated_tokens\": 96,\n      \"max_probe_calls\": 8,\n      \"max_probes_per_prefix\": 8,\n      \"max_scored_tokens\": null,\n      \"max_input_tokens\": null,\n      \"max_context_tokens\": 32768,\n      \"deadline_seconds\": null,\n      \"cost_ceiling\": null\n    },\n    \"capture\": \"none\",\n    \"session_initial\": null,\n    \"session_update\": null,\n    \"timing_kind\": \"simulated\"\n  },\n  \"partial_answer\": \"C\",\n  \"trace_reference\": null,\n  \"error\": null,\n  \"schema_version\": \"1.0\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".wheel-venv\\Scripts\\python.exe",
+        "-m",
+        "halt",
+        "methods",
+        "check",
+        "example_stopper"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5630000000019209,
+      "stdout": "\"answering\",\n            \"input_tokens\": 27,\n            \"generated_tokens\": 1,\n            \"forced_context_tokens\": 0,\n            \"scored_tokens\": 0,\n            \"recomputed_prefix_tokens\": 27,\n            \"forward_calls\": 1,\n            \"sequence_lengths\": [\n              27\n            ],\n            \"embedding_calls\": 0,\n            \"duration_seconds\": 0.0,\n            \"status\": \"completed\",\n            \"role\": \"accepted\",\n            \"cached_input_tokens\": null,\n            \"provider_reported_tokens\": null\n          },\n          {\n            \"operation_id\": \"485654cf001f4fd391b0e96a2d5b0679:op:11\",\n            \"parent_id\": \"485654cf001f4fd391b0e96a2d5b0679\",\n            \"kind\": \"decode\",\n            \"phase\": \"answering\",\n            \"input_tokens\": 28,\n            \"generated_tokens\": 1,\n            \"forced_context_tokens\": 0,\n            \"scored_tokens\": 0,\n            \"recomputed_prefix_tokens\": 28,\n            \"forward_calls\": 1,\n            \"sequence_lengths\": [\n              28\n            ],\n            \"embedding_calls\": 0,\n            \"duration_seconds\": 0.0,\n            \"status\": \"completed\",\n            \"role\": \"accepted\",\n            \"cached_input_tokens\": null,\n            \"provider_reported_tokens\": null\n          }\n        ],\n        \"measurement\": \"observed\",\n        \"billed_cost\": null,\n        \"unknown_fields\": [\n          \"billed_cost\",\n          \"cached_input_tokens\"\n        ],\n        \"schema_version\": \"1.0\"\n      },\n      \"durations\": {\n        \"prefill\": 0.0,\n        \"reasoning\": 0.0,\n        \"probes\": 0.0,\n        \"finalization\": 0.0,\n        \"controller\": 0.0,\n        \"end_to_end\": 0.0\n      },\n      \"provenance\": {\n        \"halt_version\": \"0.1.0rc1\",\n        \"halt_source_sha256\": \"5973b982acdbe8a3203cb72bdea3f79ebcf12e4eabe760848ba22f08ff621d1a\",\n        \"plugins\": [\n          {\n            \"method_id\": \"example_stopper\",\n            \"target\": \"halt_plugin_example_stopper:ExampleStopper\",\n            \"distribution\": \"halt-plugin-example-stopper\",\n            \"version\": \"0.1.0\"\n          }\n        ],\n        \"method\": {\n          \"method_id\": \"example_stopper\",\n          \"variant\": \"author_example\",\n          \"requirements\": {\n            \"capabilities\": [\n              \"answer_transition\",\n              \"token_stream\",\n              \"visible_reasoning\"\n            ],\n            \"alternatives\": [],\n            \"allow_emulated\": true,\n            \"profiles\": []\n          },\n          \"boundary\": {\n            \"name\": \"blank_line\",\n            \"version\": \"1\",\n            \"chunk_tokens\": 32\n          },\n          \"finalization_recipe\": \"halt_default_v1\",\n          \"probe_failure_policy\": \"continue\",\n          \"can_return_answer\": false,\n          \"can_abstain\": false,\n          \"implementation_status\": \"functional\",\n          \"source_relationship\": \"original_demo\",\n          \"recipe\": \"common_protocol\",\n          \"verification\": [\n            \"plugin_fixture\"\n          ],\n          \"api_version\": \"1\",\n          \"signal_operations\": []\n        },\n        \"configuration\": {\n          \"boundaries\": 1\n        },\n        \"backend\": {\n          \"name\": \"scripted\",\n          \"model_id\": \"scripted\",\n          \"model_revision\": \"scripted-v1\",\n          \"tokenizer_id\": \"scripted\",\n          \"tokenizer_revision\": \"scripted-v1\",\n          \"profile\": \"qwen3_thinking\",\n          \"capabilities\": [\n            \"answer_transition\",\n            \"cancel_request\",\n            \"embeddings\",\n            \"exact_prefix_resume\",\n            \"full_vocab_scores\",\n            \"prefix_branch\",\n            \"selected_token_scores\",\n            \"sequence_scoring\",\n            \"step_boundaries\",\n            \"token_stream\",\n            \"visible_reasoning\"\n          ],\n          \"execution_mode\": \"simulated\",\n          \"emulated_capabilities\": [],\n          \"versions\": {},\n          \"hardware\": {\n            \"device\": \"none\"\n          },\n          \"execution_settings\": {}\n        },\n        \"seed\": 0,\n        \"probe_seed\": 25214903917,\n        \"probe_invocation_seeds\": [],\n        \"probe_seed_policy\": \"settings_and_invocation_without_run_uuid_v1\",\n        \"prompt_hash\": \"d754bb792ef3c0ecd2b1829c26fe6530fc823b6b42a1928f3676db68b2b130d6\",\n        \"task_hash\": \"48d83d0d5a8f279053d00de4855062190daa474c8dd65e7abf3ab50152dbfaba\",\n        \"budget\": {\n          \"max_reasoning_tokens\": 1024,\n          \"max_answer_tokens\": 128,\n          \"max_probe_output_tokens\": 256,\n          \"max_total_generated_tokens\": 1408,\n          \"max_probe_calls\": 8,\n          \"max_probes_per_prefix\": 8,\n          \"max_scored_tokens\": null,\n          \"max_input_tokens\": null,\n          \"max_context_tokens\": 32768,\n          \"deadline_seconds\": null,\n          \"cost_ceiling\": null\n        },\n        \"capture\": \"none\",\n        \"session_initial\": null,\n        \"session_update\": null,\n        \"timing_kind\": \"simulated\"\n      },\n      \"partial_answer\": \"C\",\n      \"trace_reference\": null,\n      \"error\": null,\n      \"schema_version\": \"1.0\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    }
+  ],
+  "scope": "Local wheel/sdist build and clean wheel install; no public publishing."
+}

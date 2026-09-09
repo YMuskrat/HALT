@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-09-09",
+  "checks": [
+    {"name": "offline core Python 3.12.4", "command": ".venv/Scripts/python.exe -m pytest -m 'not model' -q", "result": "78 passed; 2 model tests deselected"},
+    {"name": "offline core Python 3.11.0", "command": ".py311-venv/Scripts/python.exe -m pytest -m 'not model' -q", "result": "78 passed; 2 model tests deselected"},
+    {"name": "independent example plugin", "command": "python -m pytest examples/external_plugin/tests -q", "result": "1 passed on both Python 3.11.0 and 3.12.4"},
+    {"name": "real backend and offline profile", "command": "HALT_RUN_MODEL_TESTS=1 HALT_MODEL_CACHE=.model-cache python -m pytest tests/test_transformers.py -q", "result": "6 passed in 117.61s; two optional-dependency deprecation warnings"},
+    {"name": "real method comparison", "artifact": "docs/verification/real_model_smoke.json", "result": "Six completed, correct runs on one original mechanics item"},
+    {"name": "REFRAIN and DEER components", "artifact": "docs/verification/adaptive_model_smoke.json", "result": "Real encoder, completed REFRAIN reward update, induced DEER trial and prefix isolation"},
+    {"name": "optional ARC adapter", "command": "python examples/prepare_arc.py --limit 2 --output runs/arc_adapter_smoke.jsonl", "result": "Two validation examples exported from allenai/ai2_arc@210d026faf9955653af8916fad021475a3f00453/ARC-Easy using Datasets 3.6.0 and Hub 0.33.4"},
+    {"name": "CLI", "command": "python scripts/check_commands.py", "result": "All 11 documented offline command checks passed"},
+    {"name": "lint", "command": "python -m ruff check .", "result": "passed"},
+    {"name": "types", "command": "python -m mypy src/halt", "result": "passed; 40 source files"},
+    {"name": "packaging", "artifact": "docs/verification/release_checks.json", "result": "Wheel/sdist builds, twine validation, clean wheel install and external plugin conformance"}
+  ],
+  "not_run": ["Python 3.13", "Linux CI", "larger established-dataset/model benchmark", "published-result reproduction", "author review"]
+}
