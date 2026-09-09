@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halt-reasoning"
+version = "0.1.0rc1"
+description = "An auditable runtime for inference-time reasoning termination"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+authors = [{name = "HALT contributors"}]
+dependencies = []
+classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13"]
+
+[project.urls]
+Repository = "https://github.com/YMuskrat/HALT"
+Issues = "https://github.com/YMuskrat/HALT/issues"
+
+[project.optional-dependencies]
+transformers = ["torch>=2.7,<3", "transformers>=4.53.2,<5", "huggingface-hub>=0.33.4,<1"]
+embeddings = ["sentence-transformers>=3,<6"]
+evaluation = ["datasets>=3,<5", "PyYAML>=6,<7"]
+plotting = ["matplotlib>=3.8,<4"]
+dev = ["pytest==8.3.5", "ruff==0.11.13", "mypy==1.16.1", "build==1.4.0", "twine==6.2.0", "PyYAML==6.0.2", "setuptools==84.0.0", "wheel==0.48.0"]
+
+[project.scripts]
+halt = "halt.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+halt = ["py.typed", "resources/method_cards/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["model: requires local model weights and optional Transformers dependencies"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [".model-deps", ".model-cache", ".source_audit", ".test-tmp*", ".wheel-venv", ".py311-venv", ".dataset-cache"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src/halt"]
+check_untyped_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true

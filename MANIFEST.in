@@ -1,0 +1,14 @@
+include LICENSE README.md SOURCE_LEDGER.md IMPLEMENTATION_STATUS.md RELEASE_NOTES.md
+include AUTHORS.md CONTRIBUTING.md CITATION.cff
+include THIRD_PARTY_NOTICES.md requirements-dev.lock requirements-model-tested.txt
+recursive-include method_cards *.json
+recursive-include docs *.md *.json
+recursive-include configs *.json *.yaml
+recursive-include examples *.py *.toml *.json *.md
+recursive-include tests *.py *.json *.jsonl
+recursive-include data *.jsonl
+recursive-include scripts *.py
+prune .source_audit
+prune .model-cache
+prune runs
+exclude docs/verification/release_checks.json

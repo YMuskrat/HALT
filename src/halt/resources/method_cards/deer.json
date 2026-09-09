@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "method_id": "deer",
+  "variant": "deer_qwen3_greedy_v1",
+  "paper": {
+    "title": "Dynamic Early Exit in Reasoning Models",
+    "authors": [
+      "Chenxu Yang",
+      "Qingyi Si",
+      "Yongjie Duan",
+      "Zheliang Zhu",
+      "Chenyu Zhu",
+      "Zheng Lin",
+      "Li Cao",
+      "Weiping Wang"
+    ],
+    "url": "https://arxiv.org/abs/2504.15895v1",
+    "version": "v1, 2025-04-22; later Qwen3 code variant",
+    "year": "2025"
+  },
+  "source_commit": "c9dd19fbffa27f841cfe47502d015b63811b4d1b",
+  "implementation_status": "functional",
+  "source_relationship": "independent_implementation",
+  "recipe": "common_protocol",
+  "verification": [
+    {
+      "kind": "source_derived_component_fixtures",
+      "artifact": "tests/unit/test_research_methods.py",
+      "scope": "Hand-checked decision rules; no upstream execution or paper results reproduced."
+    },
+    {
+      "kind": "real_model_induced_branch_fixture",
+      "artifact": "docs/verification/adaptive_model_smoke.json",
+      "scope": "Wait prefix explicitly induced, real greedy trial and unchanged main prefix verified."
+    }
+  ],
+  "author_review": "unreviewed",
+  "implementers": [
+    "HALT contributors"
+  ],
+  "license_status": "MIT",
+  "boundary": "deer_wait",
+  "signal": "geometric trial token likelihood at indices [1:] > threshold AND generated reasoning-end delimiter",
+  "finalization": "Discard trial, force closure and generate separate final answer",
+  "state_lifetime": "per run",
+  "calibration": "Demo thresholds are experimental; use separate calibration split for empirical threshold selection.",
+  "known_deviations": "See docs/audits/deer.md; no reproduced paper results claimed.",
+  "source_mapping": "docs/audits/deer.md",
+  "supported_combinations": [
+    {
+      "backend": "scripted",
+      "model": "scripted-v1",
+      "verification": "component_and_runtime_fixtures"
+    }
+  ],
+  "requirements": {
+    "capabilities": [
+      "answer_transition",
+      "exact_prefix_resume",
+      "prefix_branch",
+      "sequence_scoring",
+      "token_stream",
+      "visible_reasoning"
+    ],
+    "alternatives": [],
+    "allow_emulated": true,
+    "profiles": [
+      "qwen3_thinking",
+      "scripted"
+    ]
+  },
+  "resolved_default_spec": {
+    "method_id": "deer",
+    "variant": "deer_qwen3_greedy_v1",
+    "requirements": {
+      "capabilities": [
+        "answer_transition",
+        "exact_prefix_resume",
+        "prefix_branch",
+        "sequence_scoring",
+        "token_stream",
+        "visible_reasoning"
+      ],
+      "alternatives": [],
+      "allow_emulated": true,
+      "profiles": [
+        "qwen3_thinking",
+        "scripted"
+      ]
+    },
+    "boundary": {
+      "name": "token",
+      "version": "1",
+      "chunk_tokens": 32
+    },
+    "finalization_recipe": "halt_default_v1",
+    "probe_failure_policy": "continue",
+    "can_return_answer": false,
+    "can_abstain": false,
+    "implementation_status": "functional",
+    "source_relationship": "independent_implementation",
+    "recipe": "common_protocol",
+    "verification": [
+      "component_fixtures"
+    ],
+    "api_version": "1",
+    "signal_operations": []
+  }
+}

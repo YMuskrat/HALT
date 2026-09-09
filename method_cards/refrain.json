@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "method_id": "refrain",
+  "variant": "refrain_fixed_common_v1; refrain_adaptive_common_v1",
+  "paper": {
+    "title": "Stop When Enough: Adaptive Early-Stopping for Chain-of-Thought Reasoning",
+    "authors": [
+      "Renliang Sun",
+      "Wei Cheng",
+      "Dawei Li",
+      "Haifeng Chen",
+      "Wei Wang"
+    ],
+    "url": "https://arxiv.org/html/2510.10103v1",
+    "version": "v1, 2025-10-11",
+    "year": "2025"
+  },
+  "source_commit": null,
+  "implementation_status": "functional",
+  "source_relationship": "independent_implementation",
+  "recipe": "common_protocol",
+  "verification": [
+    {
+      "kind": "source_derived_component_fixtures",
+      "artifact": "tests/unit/test_research_methods.py",
+      "scope": "Hand-checked decision rules; no upstream execution or paper results reproduced."
+    },
+    {
+      "kind": "session_fixtures",
+      "artifact": "tests/unit/test_refrain_session.py"
+    },
+    {
+      "kind": "real_model_session_reward_and_encoder",
+      "artifact": "docs/verification/adaptive_model_smoke.json",
+      "scope": "One real budget-finalized run updated the session; no semantic-stop performance claim."
+    }
+  ],
+  "author_review": "unreviewed",
+  "implementers": [
+    "HALT contributors"
+  ],
+  "license_status": "no verified official code repository",
+  "boundary": "blank_line",
+  "signal": "prior answer cue AND current reflection cue AND max cosine to prior steps >= threshold",
+  "finalization": "Forced closure and boxed answer; adaptive answer-only likelihood reward",
+  "state_lifetime": "per run; explicit per-session controller for adaptive REFRAIN",
+  "calibration": "Demo thresholds are experimental; use separate calibration split for empirical threshold selection.",
+  "known_deviations": "See docs/audits/refrain.md; no reproduced paper results claimed.",
+  "source_mapping": "docs/audits/refrain.md",
+  "supported_combinations": [
+    {
+      "backend": "scripted",
+      "model": "scripted-v1",
+      "verification": "component_and_runtime_fixtures"
+    }
+  ],
+  "requirements": {
+    "capabilities": [
+      "answer_transition",
+      "embeddings",
+      "step_boundaries",
+      "token_stream",
+      "visible_reasoning"
+    ],
+    "alternatives": [],
+    "allow_emulated": true,
+    "profiles": []
+  },
+  "resolved_default_spec": {
+    "method_id": "refrain",
+    "variant": "refrain_fixed_common_v1",
+    "requirements": {
+      "capabilities": [
+        "answer_transition",
+        "embeddings",
+        "step_boundaries",
+        "token_stream",
+        "visible_reasoning"
+      ],
+      "alternatives": [],
+      "allow_emulated": true,
+      "profiles": []
+    },
+    "boundary": {
+      "name": "blank_line",
+      "version": "1",
+      "chunk_tokens": 32
+    },
+    "finalization_recipe": "refrain_boxed_v1",
+    "probe_failure_policy": "continue",
+    "can_return_answer": false,
+    "can_abstain": false,
+    "implementation_status": "functional",
+    "source_relationship": "independent_implementation",
+    "recipe": "common_protocol",
+    "verification": [
+      "component_fixtures"
+    ],
+    "api_version": "1",
+    "signal_operations": []
+  }
+}
