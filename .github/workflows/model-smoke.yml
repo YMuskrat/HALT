@@ -1,0 +1,25 @@
+name: optional real model smoke
+on:
+  workflow_dispatch:
+jobs:
+  model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e ".[dev,transformers]"
+      - name: Download pinned public weights
+        run: python -c "from huggingface_hub import snapshot_download; snapshot_download('Qwen/Qwen3-0.6B', revision='c1899de289a04d12100db370d81485cdf75e47ca', cache_dir='.model-cache')"
+      - name: Model lifecycle and probe isolation
+        env:
+          HALT_RUN_MODEL_TESTS: '1'
+          HALT_MODEL_CACHE: .model-cache
+        run: python -m pytest tests/test_transformers.py -q
+      - run: python examples/backend_smoke.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: real-model-mechanics
+          path: runs/backend_smoke.json

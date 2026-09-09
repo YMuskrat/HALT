@@ -1,0 +1,10 @@
+# Exact direct development dependencies exercised on Windows CPython 3.12.4.
+# Transitive environment snapshot is generated in docs/verification/dev-environment.json.
+pytest==8.3.5
+ruff==0.11.13
+mypy==1.16.1
+build==1.4.0
+twine==6.2.0
+PyYAML==6.0.2
+setuptools==84.0.0
+wheel==0.48.0

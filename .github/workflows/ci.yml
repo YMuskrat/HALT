@@ -1,0 +1,37 @@
+name: core
+on: [push, pull_request]
+jobs:
+  core:
+    strategy:
+      matrix:
+        python: ['3.11', '3.12', '3.13']
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m pip install -e examples/external_plugin
+      - run: python -m pytest -m "not model"
+      - run: python -m ruff check .
+      - run: python -m mypy src/halt
+      - run: halt demo --backend scripted
+      - run: halt methods inspect example_stopper
+      - run: halt doctor --config configs/halt_cot_scripted_demo.json
+      - run: halt benchmark --config configs/benchmark_mcq.yaml --output-dir runs/ci
+      - run: halt calibrate --config configs/calibrate_halt_cot.yaml --output runs/calibration.json
+      - run: halt replay --trace tests/fixtures/example_trace.jsonl --method halt_cot
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - run: python -m venv .wheel-venv
+      - name: Install wheel in isolated interpreter and exercise plugin
+        shell: python
+        run: |
+          import pathlib, subprocess, sys
+          executable = pathlib.Path('.wheel-venv') / ('Scripts/python.exe' if sys.platform == 'win32' else 'bin/python')
+          wheel = next(pathlib.Path('dist').glob('*.whl'))
+          subprocess.run([str(executable), '-m', 'pip', 'install', str(wheel), './examples/external_plugin'], check=True)
+          subprocess.run([str(executable), '-m', 'halt', 'demo', '--backend', 'scripted'], check=True)
+          subprocess.run([str(executable), '-m', 'halt', 'methods', 'inspect', 'example_stopper'], check=True)
