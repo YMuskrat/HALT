@@ -1,0 +1,5 @@
+id,question,A,B,C,D,answer
+addition,What is 2 + 2?,3,4,5,6,B
+subtraction,What is 9 - 4?,5,6,7,8,A
+multiplication,What is 3 times 3?,6,8,9,12,C
+division,What is 12 divided by 3?,1,2,3,4,D
