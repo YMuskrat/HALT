@@ -162,6 +162,8 @@ class ScriptedRun:
             op.scored_tokens += len(request.candidates)
             value = CandidateScores(request.candidates, scores, frame, request.scoring, request.length_normalize)
         elif isinstance(request, ScoreNextToken):
+            if request.include_entropy:
+                frame = ScoreFrame(self.prefix, vocabulary_coverage="full")
             top, end = self.backend.next_token_features[min(index, len(self.backend.next_token_features)-1)]
             self.ledger.check(scored_tokens=1)
             op.scored_tokens += 1

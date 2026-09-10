@@ -50,6 +50,24 @@ class MethodRegistry:
             name: MethodRegistration(name, "builtin", target)
             for name, target in _BUILTINS.items()
         }
+        # Contribution cards are packaged with HALT. Only explicit local method
+        # targets participate in registration; descriptive cards remain passive.
+        cards = files("halt").joinpath("resources", "method_cards")
+        for path in sorted(cards.iterdir(), key=lambda item: item.name):
+            if not path.name.endswith(".json"):
+                continue
+            card = json.loads(path.read_text(encoding="utf-8"))
+            target = card.get("implementation")
+            if target is None:
+                continue
+            method_id = card.get("method_id", "")
+            validate_method_id(method_id)
+            if (path.name != f"{method_id}.json" or not isinstance(target, str)
+                    or not re.fullmatch(rf"halt\.methods\.{re.escape(method_id)}:[A-Za-z][A-Za-z0-9_]*", target)):
+                raise ConfigurationError(f"invalid local implementation target in {path.name}")
+            if method_id in self.entries:
+                raise ConfigurationError(f"method ID collision: {method_id!r} is registered more than once")
+            self.entries[method_id] = MethodRegistration(method_id, "builtin", tuple(target.split(":")))
         discovered = metadata.entry_points(group="halt.methods") if entry_points is None else entry_points
         for entry in discovered:
             validate_method_id(entry.name)
@@ -93,6 +111,18 @@ class MethodRegistry:
         instance = self.create(method_id)
         card_path = files("halt").joinpath("resources", "method_cards", f"{method_id}.json")
         card = json.loads(card_path.read_text(encoding="utf-8")) if card_path.is_file() else None
+        if card is None and self.entries[method_id].origin != "builtin":
+            # Scaffolds ship metadata beside their implementation. Reading a card
+            # occurs only during explicit inspect, after create imports the plugin.
+            package = type(instance).__module__.split(".")[0]
+            try:
+                plugin_card = files(package).joinpath("method_card.json")
+                if plugin_card.is_file():
+                    card = json.loads(plugin_card.read_text(encoding="utf-8"))
+            except (ModuleNotFoundError, TypeError):
+                pass
+        if card is not None and card.get("method_id") != method_id:
+            raise ConfigurationError(f"method card does not describe {method_id!r}")
         return {"registration": next(x for x in self.list() if x["method_id"] == method_id),
                 "spec": to_data(instance.spec),
                 "method_card": card,
