@@ -1,18 +1,14 @@
 """Qwen3 thinking profile, audited against a pinned tokenizer and model card."""
 
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from typing import Any
+
+from halt.profiles.recipes import DEFAULT_RECIPES, AnswerRecipe
 
 QWEN3_MODEL_ID = "Qwen/Qwen3-0.6B"
 QWEN3_REVISION = "c1899de289a04d12100db370d81485cdf75e47ca"
-FINALIZATION_SUFFIXES = {
-    "halt_default_v1": "\n\nFinal answer:",
-    "halt_cot_qwen_common_v1": "\nTherefore, the final answer is",
-    "answer_convergence_qwen_common_v1": "\n\\boxed",
-    "answer_convergence_common_v1": "\n\\boxed",
-    "answer_consistency_sentence_common_v1": "\n\\boxed{",
-    "refrain_boxed_v1": "\n\nFinal Answer: \\boxed{",
-}
+FINALIZATION_SUFFIXES = {name: value.suffix for name, value in DEFAULT_RECIPES.items() if value.close_reasoning}
 
 
 @dataclass(frozen=True)
@@ -24,10 +20,16 @@ class Qwen3ThinkingProfile:
     """
 
     name: str = "qwen3_thinking"
-    version: str = "1"
+    version: str = "2"
     reasoning_start: str = "<think>"
     reasoning_end: str = "</think>"
     end_token_id: int = 151668
+    recipes: Mapping[str, AnswerRecipe] = field(default_factory=lambda: dict(DEFAULT_RECIPES))
+
+    def recipe(self, name: str) -> AnswerRecipe:
+        if name not in self.recipes:
+            raise ValueError(f"Unsupported Qwen3 finalization recipe: {name!r}")
+        return self.recipes[name]
 
     def validate(self, tokenizer: Any, model_config: Any) -> None:
         if getattr(model_config, "model_type", None) != "qwen3":
@@ -58,21 +60,20 @@ class Qwen3ThinkingProfile:
         preserves the original reasoning prefix and adds a final-answer cue.
         Paper-specific cues are explicit recipes, not implicit fallbacks.
         """
-        if recipe not in FINALIZATION_SUFFIXES:
-            raise ValueError(f"Unsupported Qwen3 finalization recipe: {recipe!r}")
-        closure = [] if self.end_token_id in ids else [self.end_token_id]
+        settings = self.recipe(recipe)
+        closure = [] if not settings.close_reasoning or self.end_token_id in ids else [self.end_token_id]
         return closure + list(
-            tokenizer.encode(FINALIZATION_SUFFIXES[recipe], add_special_tokens=False)
+            tokenizer.encode(settings.suffix, add_special_tokens=False)
         )
 
-    def candidate_tokens(self, tokenizer: Any, candidate: str) -> list[int]:
+    def candidate_tokens(self, tokenizer: Any, candidate: str, recipe: str = "candidate_scoring_v1") -> list[int]:
         """Validate a continuation after an explicit stable answer cue.
 
         Appending a candidate must leave the cue's encoding unchanged. The
         leading space belongs to the candidate, avoiding a trailing-space
         token that would be replaced by contextual BPE tokenization.
         """
-        cue = FINALIZATION_SUFFIXES["halt_cot_qwen_common_v1"]
+        cue = self.recipe(recipe).suffix
         before = list(tokenizer.encode(cue, add_special_tokens=False))
         after = list(tokenizer.encode(cue + " " + candidate, add_special_tokens=False))
         if after[: len(before)] != before:

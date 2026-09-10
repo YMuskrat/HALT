@@ -15,11 +15,11 @@ from typing import Any
 
 from halt.errors import CapabilityError, ConfigurationError
 from halt.profiles.qwen3 import (
-    FINALIZATION_SUFFIXES,
     QWEN3_MODEL_ID,
     QWEN3_REVISION,
     Qwen3ThinkingProfile,
 )
+from halt.profiles.recipes import recipe_catalog
 from halt.runtime.budgets import UsageLedger, UsageOperation
 from halt.tasks import Task
 from halt.types import (
@@ -42,6 +42,7 @@ from halt.types import (
     ScoreNextToken,
     TokenOutput,
     stable_hash,
+    to_data,
 )
 
 
@@ -58,6 +59,7 @@ class TransformersBackend:
         self, model: Any, tokenizer: Any, *, model_id: str, revision: str,
         tokenizer_revision: str, device: str = "cpu", temperature: float = 0.6,
         top_p: float = 0.95, top_k: int = 20, embeddings: Any = None,
+        answer_recipes: dict[str, Any] | None = None,
     ) -> None:
         import torch
         import transformers
@@ -71,7 +73,7 @@ class TransformersBackend:
         self.torch = torch
         self.model = model.eval()
         self.tokenizer = tokenizer
-        self.profile = Qwen3ThinkingProfile()
+        self.profile = Qwen3ThinkingProfile(recipes=recipe_catalog(answer_recipes))
         try:
             self.profile.validate(tokenizer, model.config)
         except ValueError as exc:
@@ -106,6 +108,7 @@ class TransformersBackend:
                 "attention": "eager", "use_cache": False, "profile_version": self.profile.version,
                 "signal_scores": "raw_log_probability", "sampling": "per_run_torch_generator",
                 "embedding_provider": embeddings.provenance if embeddings is not None else None,
+                "answer_recipes": to_data(self.profile.recipes),
             },
         )
 
@@ -116,6 +119,7 @@ class TransformersBackend:
         device: str = "cpu", dtype: str = "float32", cache_dir: str | None = None,
         local_files_only: bool = False, temperature: float = 0.6,
         top_p: float = 0.95, top_k: int = 20, embeddings: Any = None,
+        answer_recipes: dict[str, Any] | None = None,
     ) -> TransformersBackend:
         if model_profile != "qwen3_thinking":
             raise CapabilityError("Only the audited qwen3_thinking profile is implemented")
@@ -126,6 +130,7 @@ class TransformersBackend:
             raise ConfigurationError("Model and tokenizer revisions must be immutable 40-character commits")
         if dtype not in {"float32", "float16", "bfloat16"}:
             raise ConfigurationError("dtype must be float32, float16 or bfloat16")
+        recipe_catalog(answer_recipes)
         try:
             import torch
             from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -143,20 +148,25 @@ class TransformersBackend:
         assert revision is not None and tokenizer_revision is not None
         return cls(model, tokenizer, model_id=model_id, revision=revision,
                    tokenizer_revision=tokenizer_revision, device=device,
-                   temperature=temperature, top_p=top_p, top_k=top_k, embeddings=embeddings)
+                   temperature=temperature, top_p=top_p, top_k=top_k, embeddings=embeddings,
+                   answer_recipes=answer_recipes)
 
     @property
     def info(self) -> BackendInfo:
         return self._info
 
     def validate(self, task: Task, spec: MethodSpec) -> None:
-        if spec.finalization_recipe not in FINALIZATION_SUFFIXES:
-            raise CapabilityError(f"Unsupported finalization recipe: {spec.finalization_recipe}")
+        try:
+            recipe = self.profile.recipe(spec.finalization_recipe)
+        except ValueError as exc:
+            raise CapabilityError(str(exc)) from exc
+        if recipe.remove_suffix or not recipe.close_reasoning:
+            raise CapabilityError("Main answer finalization requires a closing recipe without prefix removal")
         if "candidate_next_token" in spec.signal_operations:
             self.candidate_ids(task.candidates)
 
-    def candidate_ids(self, candidates: tuple[str, ...]) -> tuple[int, ...]:
-        encoded = [self.profile.candidate_tokens(self.tokenizer, candidate) for candidate in candidates]
+    def candidate_ids(self, candidates: tuple[str, ...], recipe: str = "candidate_scoring_v1") -> tuple[int, ...]:
+        encoded = [self.profile.candidate_tokens(self.tokenizer, candidate, recipe) for candidate in candidates]
         if any(len(ids) != 1 for ids in encoded):
             raise CapabilityError("candidate_next_token requires each contextual candidate to be one token; use an explicit sequence-scoring adaptation")
         ids = tuple(ids[0] for ids in encoded)
@@ -297,9 +307,8 @@ class TransformersRun:
         self.ids = self._insert(self.ids, extra, Phase.ANSWERING, self.context.run_id)
         self._pending_logits = None
         self._text_ids, self._decoded = [], ""
-        self.answer_prefix = "\\boxed{" if recipe in {
-            "refrain_boxed_v1", "answer_consistency_sentence_common_v1"
-        } else ""
+        prefix = self.backend.profile.recipe(recipe).answer_prefix
+        self.answer_prefix = prefix if prefix.endswith("{") else ""
         self.transitioned = True
 
     @property
@@ -336,8 +345,20 @@ class TransformersRun:
         return tuple(logs)
 
     def _branch(self, recipe: str, parent: str) -> list[int]:
-        extra = self.backend.profile.transition(self.backend.tokenizer, self.ids[self.prompt_length:], recipe)
-        return self._insert(self.ids, extra, Phase.PROBING, parent)
+        ids = list(self.ids)
+        settings = self.backend.profile.recipe(recipe)
+        if settings.remove_suffix:
+            tokenizer = self.backend.tokenizer
+            assistant_ids = ids[self.prompt_length:]
+            text = tokenizer.decode(assistant_ids, skip_special_tokens=False)
+            trigger = list(tokenizer.encode(settings.remove_suffix, add_special_tokens=False))
+            if not text.endswith(settings.remove_suffix):
+                raise ValueError("Trial recipe requires its exact terminal trigger suffix")
+            if not trigger or len(assistant_ids) < len(trigger) or assistant_ids[-len(trigger):] != trigger:
+                raise CapabilityError("Trial trigger is not an exact removable token suffix")
+            ids = ids[:-len(trigger)]
+        extra = self.backend.profile.transition(self.backend.tokenizer, ids[self.prompt_length:], recipe)
+        return self._insert(ids, extra, Phase.PROBING, parent)
 
     def _frame(self, prefix: PrefixRef, *, processing: str = "raw",
                coverage: str = "selected_exact") -> ScoreFrame:
@@ -365,9 +386,10 @@ class TransformersRun:
         torch, tokenizer = self.backend.torch, self.backend.tokenizer
         value: Any
         if isinstance(request, ScoreCandidates):
-            ids = self._branch("halt_cot_qwen_common_v1", parent)
+            recipe = "candidate_scoring_v1" if request.recipe == "halt_default_v1" else request.recipe
+            ids = self._branch(recipe, parent)
             if request.scoring == "candidate_next_token":
-                candidate_ids = self.backend.candidate_ids(request.candidates)
+                candidate_ids = self.backend.candidate_ids(request.candidates, recipe)
                 logits, _ = self._forward(ids, Phase.PROBING, "candidate_score", parent,
                                           scored_tokens=len(candidate_ids))
                 log_probs = torch.log_softmax(logits, dim=-1)
@@ -375,7 +397,7 @@ class TransformersRun:
             elif request.scoring == "candidate_sequence":
                 scores_list = []
                 for candidate in request.candidates:
-                    tokens = self.backend.profile.candidate_tokens(tokenizer, candidate + request.suffix)
+                    tokens = self.backend.profile.candidate_tokens(tokenizer, candidate + request.suffix, recipe)
                     logs = self._sequence(ids, tokens, parent)
                     scores_list.append(sum(logs) / len(logs) if request.length_normalize else sum(logs))
                 scores = tuple(scores_list)
@@ -428,52 +450,32 @@ class TransformersRun:
 
     def _answer_probe(self, request: ProbeAnswer, seed: int) -> ParsedAnswer:
         tokenizer, torch = self.backend.tokenizer, self.backend.torch
-        deer = request.recipe == "deer_qwen3_greedy_v1"
-        if deer:
-            # Match the pinned greedy Qwen3 branch: remove the detected Wait
-            # from the trial prefix, preserve it unchanged in the main branch.
-            ids = list(self.ids)
-            text = tokenizer.decode(ids, skip_special_tokens=False)
-            if not text.endswith("Wait"):
-                raise ValueError("DEER trial requires an exact terminal Wait trigger")
-            trigger = tokenizer.encode("Wait", add_special_tokens=False)
-            if ids[-len(trigger):] != trigger:
-                raise CapabilityError("DEER Wait trigger is not an exact removable token suffix")
-            ids = ids[:-len(trigger)]
-            extra = tokenizer.encode("\n**Final Answer**\n\\boxed", add_special_tokens=False)
-            ids = self._insert(ids, list(extra), Phase.PROBING, request.request_id)
-        else:
-            ids = self._branch(request.recipe, request.request_id)
-            if request.induction:
-                ids = self._insert(ids, list(tokenizer.encode(request.induction, add_special_tokens=False)),
-                                   Phase.PROBING, request.request_id)
+        recipe = self.backend.profile.recipe(request.recipe)
+        ids = self._branch(request.recipe, request.request_id)
+        if request.induction:
+            ids = self._insert(ids, list(tokenizer.encode(request.induction, add_special_tokens=False)),
+                               Phase.PROBING, request.request_id)
         generator = torch.Generator(device=self.backend.device).manual_seed(seed)
         generated: list[int] = []
         log_probs: list[float] = []
-        complete, end_found = False, not deer
+        complete, end_found = False, not recipe.stop_at_reasoning_end
         for _ in range(request.max_work.generated_tokens):
             self.ledger.check(generated_tokens=1, context_tokens=len(ids) + 1)
             logits, op = self._forward(ids, Phase.PROBING, "answer_probe_recompute", request.request_id,
-                                       scored_tokens=1 if request.score_answer or deer else 0)
+                                       scored_tokens=1 if request.score_answer or recipe.score_generated_tokens else 0)
             token, log_prob = self._sample(logits, generator, request.temperature)
             self.ledger.generated(op)
             ids.append(token)
             generated.append(token)
             log_probs.append(log_prob)
-            if deer and token == self.backend.profile.end_token_id:
+            if recipe.stop_at_reasoning_end and token == self.backend.profile.end_token_id:
                 end_found = complete = True
                 break
             if token in self.backend.eos_ids:
                 complete = True
                 break
         raw = tokenizer.decode(generated, skip_special_tokens=True).strip()
-        # Boxed recipes end their induction just before the argument.
-        if ("boxed" in request.recipe or "answer_convergence" in request.recipe
-                or "answer_consistency" in request.recipe or deer):
-            if raw.startswith("{"):
-                raw = "\\boxed" + raw
-            elif request.recipe in {"refrain_boxed_v1", "answer_consistency_sentence_common_v1"}:
-                raw = "\\boxed{" + raw
+        raw = recipe.reconstruct_answer(raw)
         answer = self.task.normalize(raw)
         return ParsedAnswer(raw, answer, answer is not None and complete, complete,
                             tuple(log_probs), end_found)
