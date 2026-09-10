@@ -4,9 +4,9 @@ include THIRD_PARTY_NOTICES.md requirements-dev.lock requirements-model-tested.t
 recursive-include method_cards *.json
 recursive-include docs *.md *.json
 recursive-include configs *.json *.yaml
-recursive-include examples *.py *.toml *.json *.md
+recursive-include examples *.py *.toml *.json *.md *.ipynb
 recursive-include tests *.py *.json *.jsonl
-recursive-include data *.jsonl
+recursive-include data *.jsonl *.csv
 recursive-include scripts *.py
 prune .source_audit
 prune .model-cache

@@ -21,6 +21,9 @@ jobs:
       - run: halt methods inspect example_stopper
       - run: halt doctor --config configs/halt_cot_scripted_demo.json
       - run: halt benchmark --config configs/benchmark_mcq.yaml --output-dir runs/ci
+      - run: halt dataset check data/example_questions.csv
+      - run: halt benchmark --dataset data/example_questions.csv --backend scripted --methods full_reasoning,halt_cot --output-dir runs/ci-trial --quiet
+      - run: python examples/analyze_results.py runs/ci-trial --output runs/ci-trial/custom.json
       - run: halt calibrate --config configs/calibrate_halt_cot.yaml --output runs/calibration.json
       - run: halt replay --trace tests/fixtures/example_trace.jsonl --method halt_cot
       - run: python -m build
@@ -35,3 +38,5 @@ jobs:
           subprocess.run([str(executable), '-m', 'pip', 'install', str(wheel), './examples/external_plugin'], check=True)
           subprocess.run([str(executable), '-m', 'halt', 'demo', '--backend', 'scripted'], check=True)
           subprocess.run([str(executable), '-m', 'halt', 'methods', 'inspect', 'example_stopper'], check=True)
+          subprocess.run([str(executable), '-m', 'halt', 'dataset', 'check', 'data/example_questions.csv'], check=True)
+          subprocess.run([str(executable), '-m', 'halt', 'benchmark', '--dataset', 'data/example_questions.csv', '--backend', 'scripted', '--output-dir', 'runs/wheel-trial', '--quiet'], check=True)

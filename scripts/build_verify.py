@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 from pathlib import Path
 
 from halt.provenance import software_identity
@@ -46,7 +47,8 @@ check([sys.executable, "-m", "pip", "wheel", "examples/external_plugin", "--no-b
 destination = Path(".wheel-venv")
 check([sys.executable, "-m", "venv", str(destination)])
 interpreter = destination / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
-wheel = next(Path("dist").glob("halt_reasoning-*.whl"))
+version = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+wheel = next(Path("dist").glob(f"halt_reasoning-{version}-*.whl"))
 plugin = next(Path("dist/plugins").glob("*.whl"))
 check([str(interpreter), "-m", "pip", "install", "--no-index", "--force-reinstall", str(wheel), str(plugin)])
 check([str(interpreter), "-c", "import halt,sys; from halt.registry import MethodRegistry; "
@@ -54,6 +56,11 @@ check([str(interpreter), "-c", "import halt,sys; from halt.registry import Metho
        "assert MethodRegistry().inspect('halt_cot')['method_card']['source_commit']; print(halt.__file__)"])
 check([str(interpreter), "-m", "halt", "demo", "--backend", "scripted"])
 check([str(interpreter), "-m", "halt", "methods", "check", "example_stopper"])
+check([str(interpreter), "-m", "halt", "dataset", "check", "data/example_questions.csv"])
+check([str(interpreter), "-m", "halt", "benchmark", "--dataset", "data/example_questions.csv",
+       "--backend", "scripted", "--output-dir", "runs/wheel-trial", "--quiet"])
+check([str(interpreter), "examples/analyze_results.py", "runs/wheel-trial",
+       "--output", "runs/wheel-trial/custom.json"])
 report = {"schema_version": "1.0", "python": sys.version, **software_identity(), "checks": results,
           "scope": "Local wheel/sdist build and clean wheel install; no public publishing."}
 Path("docs/verification").mkdir(parents=True, exist_ok=True)

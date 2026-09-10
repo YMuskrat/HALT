@@ -6,8 +6,11 @@ from halt.registry import MethodRegistry
 from halt.types import to_data
 
 registry = MethodRegistry()
+audited = {"halt_cot", "thinkbrake", "answer_convergence", "refrain", "deer"}
 for path in Path("method_cards").glob("*.json"):
     card = json.loads(path.read_text(encoding="utf-8"))
+    if card["method_id"] not in audited:
+        continue
     method = registry.create(card["method_id"])
     card["implementation_status"] = "functional"
     card["requirements"] = to_data(method.spec.requirements)
