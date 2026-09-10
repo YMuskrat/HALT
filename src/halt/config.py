@@ -23,7 +23,8 @@ _KEYS = {
     "runtime": {"seed", "capture"},
     "task": {"type", "question", "choices"},
     "evaluation": {"dataset", "adapter", "split", "data_revision", "methods", "baseline",
-                   "bootstrap_samples", "seed", "resume", "session", "protocol", "limit"},
+                   "bootstrap_samples", "seed", "resume", "session", "protocol", "limit",
+                   "question_column", "answer_column", "id_column", "choices_column", "choice_columns"},
     "calibration": {"parameter_grid", "accuracy_tolerance", "objective", "recipe_frozen"},
 }
 
@@ -117,6 +118,13 @@ def validate_config(data: dict[str, Any], *, base_dir: Path | None = None) -> Re
     registry = MethodRegistry()
     registry.create(merged["method"]["name"], merged["method"]["parameters"])
     evaluation = merged["evaluation"]
+    for column in ("question_column", "answer_column", "id_column", "choices_column"):
+        if column in evaluation and (not isinstance(evaluation[column], str) or not evaluation[column].strip()):
+            raise ConfigurationError(f"evaluation.{column} must be a nonempty column name")
+    if "choice_columns" in evaluation and (not isinstance(evaluation["choice_columns"], dict)
+            or any(not isinstance(k, str) or not isinstance(v, str) or not k or not v
+                   for k, v in evaluation["choice_columns"].items())):
+        raise ConfigurationError("evaluation.choice_columns must map answer labels to column names")
     for method in evaluation.get("methods", []):
         if not isinstance(method, dict):
             raise ConfigurationError("evaluation.methods entries must be objects")

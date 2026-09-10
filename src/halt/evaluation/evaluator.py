@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import platform
+from collections.abc import Callable
 from importlib import metadata
 from pathlib import Path
 from typing import Any
@@ -10,7 +11,9 @@ from halt.api import HaltRunner
 from halt.config import ResolvedConfig, make_backend
 from halt.errors import ConfigurationError
 from halt.evaluation.datasets import load_dataset
+from halt.evaluation.identifiers import method_id
 from halt.evaluation.reporting import write_reports
+from halt.profiles.selection import resolve_model_config
 from halt.registry import MethodRegistry
 from halt.types import SCHEMA_VERSION, stable_hash, to_data
 
@@ -34,17 +37,18 @@ def _write_json(path: Path, data: Any) -> None:
     temporary.replace(path)
 
 
-def evaluate(config: ResolvedConfig, output_dir: str | Path, *, backend: Any = None) -> dict[str, Any]:
+def evaluate(config: ResolvedConfig, output_dir: str | Path, *, backend: Any = None,
+             progress: Callable[[int, int, dict[str, Any]], None] | None = None) -> dict[str, Any]:
     settings = config.evaluation
     if not settings.get("dataset"):
         raise ConfigurationError("evaluation.dataset is required")
     dataset = load_dataset(settings["dataset"], adapter=settings.get("adapter", "mcq_jsonl"),
                            split=settings.get("split", "development"), revision=settings.get("data_revision", "local"),
-                           limit=settings.get("limit"))
+                           limit=settings.get("limit"),
+                           **{key: settings[key] for key in ("question_column", "answer_column",
+                              "id_column", "choices_column", "choice_columns") if key in settings})
     directory = Path(output_dir)
     directory.mkdir(parents=True, exist_ok=True)
-    backend = backend if backend is not None else make_backend(config)
-    runner = HaltRunner(backend)
     registry = MethodRegistry()
     method_settings = settings.get("methods") or [
         {"name": "full_reasoning"}, {"name": "fixed_reasoning_budget", "parameters": {"tokens": 4}},
@@ -55,16 +59,28 @@ def evaluate(config: ResolvedConfig, output_dir: str | Path, *, backend: Any = N
     names: set[str] = set()
     for entry in method_settings:
         parameters = entry.get("parameters", {})
-        name = entry.get("id", entry["name"] + ("_" + str(parameters["tokens"]) if entry["name"] == "fixed_reasoning_budget" else ""))
+        name = method_id(entry)
         if name in names:
             if entry == config.method and name == "full_reasoning":
                 continue
             raise ConfigurationError(f"duplicate evaluation method ID {name!r}; assign distinct id fields")
         names.add(name)
         method = registry.create(entry["name"], parameters)
+        validator = getattr(method, "validate_task", None)
+        if validator is not None:
+            for item in dataset.items:
+                validator(item.task)
+        methods.append((name, entry, method))
+    baseline = settings.get("baseline", "full_reasoning")
+    if baseline not in names:
+        raise ConfigurationError(f"baseline {baseline!r} is absent from evaluated methods")
+    if backend is None:
+        config = resolve_model_config(config)
+        backend = make_backend(config)
+    runner = HaltRunner(backend)
+    for _, _, method in methods:
         for item in dataset.items:
             runner.inspect(item.task, method, config.budget)
-        methods.append((name, entry, method))
     environment = environment_identity()
     resolved = config.to_dict()
     resolved["evaluation"] = {**settings, "methods": [entry for _, entry, _ in methods]}
@@ -81,6 +97,7 @@ def evaluate(config: ResolvedConfig, output_dir: str | Path, *, backend: Any = N
             except (ValueError, KeyError) as exc:
                 raise ConfigurationError(f"invalid resume checkpoint line {number}; retain or repair the interrupted final line explicitly") from exc
     records = []
+    total = len(methods) * len(dataset.items)
     for name, entry, method in methods:
         session = None
         if entry["name"] == "refrain" and entry.get("parameters", {}).get("adaptive", False):
@@ -107,6 +124,8 @@ def evaluate(config: ResolvedConfig, output_dir: str | Path, *, backend: Any = N
                 if session is not None:
                     session = type(session).from_dict(saved["session_after"])
                 records.append(saved)
+                if progress is not None:
+                    progress(len(records), total, saved)
                 continue
             trace = directory / "traces" / f"{identity}.jsonl" if config.runtime["capture"] != "none" else None
             if trace is not None:
@@ -119,11 +138,15 @@ def evaluate(config: ResolvedConfig, output_dir: str | Path, *, backend: Any = N
                 "item_id": item.item_id, "correct": item.correct(result.answer) and str(result.status) == "completed",
                 "evidence_kind": "simulated" if mode == "simulated" else ("replay" if backend.info.name == "replay" or "replay" in mode or mode == "recorded_observations" else "real"),
                 "manifest": run_manifest, "session_before": before,
+                "evaluation": {"question": item.task.visible().get("question", ""),
+                    "choices": item.task.visible().get("choices", {}), "reference": item.reference},
                 "session_after": to_data(session.to_dict()) if session is not None else None,
                 "result": result.to_dict()}
             records.append(record)
             with checkpoint.open("a", encoding="utf-8") as handle:
                 handle.write(json.dumps(record, allow_nan=False) + "\n")
                 handle.flush()
-    return write_reports(records, directory, baseline=settings.get("baseline", "full_reasoning"),
+            if progress is not None:
+                progress(len(records), total, record)
+    return write_reports(records, directory, baseline=baseline,
                          bootstrap_samples=settings.get("bootstrap_samples", 2000), seed=settings.get("seed", 0))

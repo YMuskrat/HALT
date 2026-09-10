@@ -11,6 +11,8 @@ from halt.config import ResolvedConfig, make_backend, validate_config
 from halt.errors import ConfigurationError
 from halt.evaluation.datasets import load_dataset
 from halt.evaluation.evaluator import environment_identity, evaluate
+from halt.profiles.selection import resolve_model_config
+from halt.registry import MethodRegistry
 from halt.types import SCHEMA_VERSION, stable_hash, to_data
 
 
@@ -33,24 +35,35 @@ def calibrate(config: ResolvedConfig, output: str | Path) -> dict[str, Any]:
         raise ConfigurationError("unsupported empirical calibration objective")
     settings_list = [{**config.method["parameters"], **dict(zip(grid, values, strict=True))}
                      for values in itertools.product(*grid.values())]
-    backend = make_backend(config)
     data = config.to_dict()
     data["evaluation"]["methods"] = [{"name": "full_reasoning"}] + [
         {"name": config.method["name"], "parameters": parameters, "id": f"calibration_{i}"}
         for i, parameters in enumerate(settings_list)]
     data["evaluation"]["baseline"] = "full_reasoning"
     data["evaluation"]["resume"] = False
+    resolved = validate_config(data)
+    dataset = load_dataset(config.evaluation["dataset"], adapter=config.evaluation.get("adapter", "mcq_jsonl"),
+                           split="calibration", revision=config.evaluation.get("data_revision", "local"),
+                           limit=config.evaluation.get("limit"),
+                           **{key: config.evaluation[key] for key in ("question_column", "answer_column",
+                              "id_column", "choices_column", "choice_columns") if key in config.evaluation})
+    registry = MethodRegistry()
+    for entry in resolved.evaluation["methods"]:
+        method = registry.create(entry["name"], entry.get("parameters", {}))
+        validator = getattr(method, "validate_task", None)
+        if validator is not None:
+            for item in dataset.items:
+                validator(item.task)
+    resolved = resolve_model_config(resolved)
+    backend = make_backend(resolved)
     with tempfile.TemporaryDirectory(prefix="halt-calibration-") as directory:
-        summary = evaluate(validate_config(data), directory, backend=backend)
+        summary = evaluate(resolved, directory, backend=backend)
     baseline = summary["methods"][0]
     eligible = [row for row in summary["methods"][1:] if row["accuracy"] >= baseline["accuracy"] - tolerance]
     chosen = min(eligible, key=lambda row: (row[objective], -row["accuracy"], row["method_id"])) if eligible else None
-    dataset = load_dataset(config.evaluation["dataset"], adapter=config.evaluation.get("adapter", "mcq_jsonl"),
-                           split="calibration", revision=config.evaluation.get("data_revision", "local"),
-                           limit=config.evaluation.get("limit"))
     artifact = {"schema_version": SCHEMA_VERSION, "kind": "empirical_calibration", "statistical_guarantee": False,
         "environment": environment_identity(), "backend": to_data(backend.info), "dataset": dataset.identity(),
-        "resolved_configuration": config.to_dict(), "objective": objective, "accuracy_tolerance": tolerance,
+        "resolved_configuration": resolved.to_dict(), "objective": objective, "accuracy_tolerance": tolerance,
         "tested_parameters": settings_list, "results": summary,
         "chosen_parameters": settings_list[int(chosen["method_id"].split("_")[-1])] if chosen else None,
         "status": "selected" if chosen else "no_feasible_setting",
