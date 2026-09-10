@@ -1,3 +1,26 @@
+# Unreleased contributor and experiment update
+
+CSV/JSONL datasets now have automatic common-column detection, explicit mappings,
+and validation before model loading. `halt benchmark --dataset` supports model
+selection with resolved commit pins, method selection, parameter overrides,
+progress, and a compact comparison table. Dense Qwen3 remains the supported model
+family; these conveniences do not add arbitrary-model support.
+
+Benchmarks save versioned per-question CSV/JSONL, summaries, manifests, and a
+standalone HTML report. A dependency-free analysis API loads and compares the same
+measurements, pairs question IDs and seeds, retains failures, and rejects incompatible
+experiments. Adaptive or repeated-question observations receive appropriate
+uncertainty notes instead of an iid observation bootstrap interval.
+
+The public optional `ProbeMethod` helper shares the `HaltMethod` contract with
+`BaseMethod`. Contributors can scaffold a pull request with automatic registration,
+including a moving-average entropy example, or install a separate plugin. Original
+methods require no paper attribution. Prompt recipes are explicit versioned data,
+and previous recipe names remain compatible aliases.
+
+See [dataset onboarding](docs/datasets.md), [experiment settings](docs/experiments.md),
+[custom comparisons](docs/results_format.md), and [method authoring](docs/author_guide.md).
+
 # 0.1.0rc1 implementation candidate
 
 HALT now provides a dependency-free core with a synchronous runner/stream API,

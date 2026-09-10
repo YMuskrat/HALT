@@ -57,6 +57,36 @@ Static `doctor` does not load model weights. Explicit model checks and measured
 CPU integration evidence are documented in [the backend audit](docs/backend_transformers.md).
 Small-model mechanics checks do not establish research quality or efficiency.
 
+Try your own multiple-choice or numeric questions in CSV or JSONL:
+
+```sh
+halt dataset check data/example_questions.csv
+halt benchmark --dataset data/example_questions.csv --output-dir runs/my-trial
+```
+
+The trial uses pinned Qwen3-0.6B and compares full reasoning with a compatible
+stopping method. Install the `transformers` extra above for inference, or add
+`--backend scripted` for an offline demonstration. Choose methods with
+`--methods full_reasoning,halt_cot,thinkbrake` and change a setting with
+`--param halt_cot.threshold=0.5`. Use `--model` to select another supported dense
+Qwen3 checkpoint; HALT records its resolved model and tokenizer commits.
+
+Each trial prints a small comparison table and saves an interactive `report.html`,
+per-question `results.csv` / `results.jsonl`, `summary.csv`, and `manifest.json`.
+Open the HTML locally or use the exported numbers in your own plots and tables:
+
+```python
+from halt.evaluation import load_results, compare, render_comparison
+
+rows = load_results("runs/my-trial")
+print(render_comparison(compare(rows, baseline="full_reasoning")))
+# Optional: pandas.DataFrame(rows).to_parquet("my-results.parquet")
+```
+
+See [dataset formats and column mapping](docs/datasets.md),
+[model trials and experiment settings](docs/experiments.md), and
+[results and custom comparisons](docs/results_format.md).
+
 The available baselines are `full_reasoning`, `fixed_reasoning_budget` and
 `immediate_answer`. The research controllers are HALT-CoT candidate entropy,
 ThinkBrake log margin, Answer Convergence answer consistency, REFRAIN fixed or
@@ -71,6 +101,15 @@ halt replay --trace tests/fixtures/example_trace.jsonl --method halt_cot
 halt new-method my_stopper --output runs/my_stopper
 python -m pip install -e runs/my_stopper
 ```
+
+To contribute a method directly through a pull request, run
+`halt new-method my_stopper --contribute --template moving_average` in a checkout.
+HALT generates the method, test, registration card, and demo configuration.
+Usually you edit just the method and its test; edit attribution when adapting
+existing work. Every method uses the same `HaltMethod` contract. Inherit
+`BaseMethod` for general event handling or the optional `ProbeMethod` for signal
+requests and boundary callbacks. See the [author guide](docs/author_guide.md) and
+[available signals](docs/signals.md).
 
 The original toy dataset proves mechanics only. Evaluation keeps reference labels
 outside inference objects, reports all probe work, and separates real inference,

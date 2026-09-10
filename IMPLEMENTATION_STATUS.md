@@ -6,6 +6,17 @@ calibration and replay are implemented. **The full research/release specificatio
 is not declared complete:** source-exact experimental parity and broader benchmark/
 platform evidence remain unmet gates. No PyPI release or author outreach occurred.
 
+The contributor/experiment update adds CSV/JSONL import and validation, one-command
+dataset/model trials, immutable checkpoint resolution, a public neutral method
+helper, pull-request scaffolds, configurable answer recipes, reusable result exports,
+an interactive local HTML report, and Python/notebook comparison examples.
+The update passed **177 offline tests**, Ruff, mypy (47 source files), wheel/sdist
+validation and clean-wheel trial/plugin checks. Six backend/profile tests passed
+with cached Qwen3 weights, and the real REFRAIN/induced-DEER checks passed again.
+A two-method CLI model trial retained both budget-incomplete answers in its reports.
+See [update verification](docs/verification/experiment_update.md) and the
+[public CI runs](https://github.com/YMuskrat/HALT/actions/workflows/ci.yml).
+
 | Milestone | Implemented and checked | Remaining gate |
 |---|---|---|
 | M0 | Primary-source ledger, immutable source/model pins, method audits/cards, license/credit separation; workspace was empty | ThinkBrake generation code absent; no verified official REFRAIN repository; source ambiguities remain explicit |
@@ -13,8 +24,8 @@ platform evidence remain unmet gates. No PyPI release or author outreach occurre
 | M2 | Pinned Qwen3-0.6B / Transformers 4.53.2 CPU decode, candidate/next-token/sequence scoring, isolated probes, RNG continuation, forced answer and accounting | Other models/cache modes/hardware are unverified; no optimized KV reuse |
 | M3 | HALT-CoT, ThinkBrake and Answer Convergence distinct controllers; source-derived fixtures; each stopped and returned a valid answer in the real one-item smoke comparison | These are named common-protocol adaptations, not exact upstream experimental reproductions or calibrated quality evidence |
 | M4 | REFRAIN fixed detector and explicit adaptive session; per-arm UCB/reward/persistence/order fixtures; DEER Qwen3 trial rule/rollback fixtures; real encoder/reward and induced DEER branch checks | No end-to-end published-result reproduction; REFRAIN paper ambiguities and DEER token-suffix restriction are documented |
-| M5 | Entry-point registry, scaffolder, independently installed plugin; MCQ/numeric JSONL; optional pinned ARC adapter; resume identities; reports/bootstrap; calibration; opt-in replay | Larger established-dataset/model benchmark and independently initialized adaptive-session uncertainty study not run |
-| M6 | Documentation, support matrix, source cards included in wheel, clean install, Python 3.11/3.12 offline checks, CI definitions and release notes | Python 3.13 and Linux CI are configured but not executed here; no author review, PyPI-name availability claim or PyPI publishing |
+| M5 | Entry-point and contribution-card registry; boundary/moving-average scaffolds; MCQ/numeric CSV/JSONL and optional pinned ARC adapter; resume identities; reusable CSV/JSONL and HTML reports; comparison API; calibration; opt-in replay | Larger established-dataset/model benchmark and independently initialized adaptive-session uncertainty study not run |
+| M6 | Documentation, support matrix, source cards included in wheel, clean install, local Python 3.11/3.12 checks, public Linux/Windows Python 3.11–3.13 CI and release notes | No author review, PyPI-name availability claim or PyPI publishing |
 
 Actual evidence is in [backend verification](docs/backend_verification.md),
 [method fixtures](tests/unit/test_research_methods.py),
@@ -24,7 +35,7 @@ at `docs/verification/release_checks.json`. The scripted report is explicitly ma
 simulated; the six-method real comparison is one original arithmetic question, not
 an accuracy/efficiency benchmark. Full reasoning's answer was never treated as gold.
 
-Local verification includes 78 passing offline tests under each of CPython 3.12.4 and 3.11.0,
+Initial-candidate verification included 78 passing offline tests under each of CPython 3.12.4 and 3.11.0,
 the separately installed plugin fixture, Ruff and mypy. Six backend/profile tests
 passed (including two opted-in real-model tests). The six real-method comparison
 runs all completed with the correct one-item answer; REFRAIN's real session reward
