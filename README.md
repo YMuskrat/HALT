@@ -124,7 +124,7 @@ python -m pytest -m "not model"
 python -m ruff check .
 python -m mypy src/halt
 python -m build
-python -m twine check dist/*
+python -m twine check dist/*.whl dist/*.tar.gz
 ```
 
 See [contributing](CONTRIBUTING.md), [architecture](docs/architecture.md),

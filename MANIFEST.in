@@ -11,4 +11,5 @@ recursive-include scripts *.py
 prune .source_audit
 prune .model-cache
 prune runs
+prune examples/external_plugin/build
 exclude docs/verification/release_checks.json
