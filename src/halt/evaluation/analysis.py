@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from halt.errors import ConfigurationError
+from halt.evaluation.uncertainty import cluster_bootstrap
 from halt.types import SCHEMA_VERSION, stable_hash
 
 RESULTS_SCHEMA_VERSION = "1.0"
@@ -162,13 +163,16 @@ def paired_bootstrap(differences: list[float], *, samples: int = 2000, seed: int
 
 
 def compare(records: Iterable[dict[str, Any]], *, baseline: str = "full_reasoning",
-            bootstrap_samples: int = 2000, seed: int = 0) -> dict[str, Any]:
+            bootstrap_samples: int = 2000, seed: int = 0,
+            uncertainty: str = "iid") -> dict[str, Any]:
     """Compare compatible runs, paired by question and seed, with failures in the denominator.
 
     Reject mixed datasets/models/settings/code and duplicate observations. For separate
     experiments use ``grouped_compare``. Adaptive or repeated-question multi-seed runs
     retain point estimates but have no iid item bootstrap interval.
     """
+    if uncertainty not in {"iid", "question"}:
+        raise ConfigurationError("uncertainty must be iid or question")
     if type(bootstrap_samples) is not int or bootstrap_samples < 1:
         raise ConfigurationError("bootstrap_samples must be a positive integer")
     data = [measurement_row(record) for record in records]
@@ -230,6 +234,15 @@ def compare(records: Iterable[dict[str, Any]], *, baseline: str = "full_reasonin
         repeated_questions = len({a["question_id"] for a, _ in paired}) != len(paired)
         row["adaptive_session"] = any(r["adaptive_session"] for r in group)
         row["paired_accuracy_ci95"] = None if adaptive or repeated_questions or not differences else paired_bootstrap(differences, samples=bootstrap_samples, seed=seed)
+        question_clusters: dict[str, list[float]] = {}
+        for a, b in paired:
+            question_clusters.setdefault(a["question_id"], []).append(float(a["correct"]) - float(b["correct"]))
+        if uncertainty == "question":
+            row["paired_accuracy_ci95"] = (
+                cluster_bootstrap(list(question_clusters.values()), samples=bootstrap_samples, seed=seed)
+                if not adaptive and len(question_clusters) >= 2 else None)
+            row["uncertainty_unit"] = "question"
+            row["independent_question_count"] = len(question_clusters)
         interval = row["paired_accuracy_ci95"]
         row["paired_accuracy_ci95_low"] = interval[0] if interval is not None else None
         row["paired_accuracy_ci95_high"] = interval[1] if interval is not None else None
@@ -242,6 +255,12 @@ def compare(records: Iterable[dict[str, Any]], *, baseline: str = "full_reasonin
             "Repeated questions across seeds; iid observation bootstrap is inapplicable. Use an analysis accounting for repeated questions." if repeated_questions else
             "No matched question/seed pairs; paired effects and intervals are unavailable." if not differences else
             "Paired percentile bootstrap over examples; small samples may give uninformative intervals.")
+        if uncertainty == "question" and not adaptive:
+            row["uncertainty_note"] = (
+                "Question-cluster percentile bootstrap, retaining all matched seeds per question; "
+                "observation-weighted paired mean. Assumes independent questions; small samples may be uninformative."
+                if len(question_clusters) >= 2 else
+                "At least two independent matched questions are required for a question-cluster interval.")
         rows.append(row)
     first = data[0]
     evidence = first["evidence_kind"]
@@ -256,7 +275,7 @@ def compare(records: Iterable[dict[str, Any]], *, baseline: str = "full_reasonin
 
 def grouped_compare(records: Iterable[dict[str, Any]], *, by: Sequence[str] = ("comparison_id",),
                     baseline: str = "full_reasoning", bootstrap_samples: int = 2000,
-                    seed: int = 0) -> list[dict[str, Any]]:
+                    seed: int = 0, uncertainty: str = "iid") -> list[dict[str, Any]]:
     """Produce separate comparisons by field(s); each group still requires compatible runs."""
     if not by or isinstance(by, str):
         raise ConfigurationError("by must be a nonempty sequence of field names, e.g. ('comparison_id',)")
@@ -269,4 +288,4 @@ def grouped_compare(records: Iterable[dict[str, Any]], *, by: Sequence[str] = ("
         except (KeyError, TypeError) as exc:
             raise ConfigurationError("group fields must be existing scalar result fields") from exc
     return [{"group": dict(zip(by, key, strict=True)), "comparison": compare(group, baseline=baseline,
-             bootstrap_samples=bootstrap_samples, seed=seed)} for key, group in groups.items()]
+             bootstrap_samples=bootstrap_samples, seed=seed, uncertainty=uncertainty)} for key, group in groups.items()]

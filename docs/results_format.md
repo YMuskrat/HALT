@@ -158,3 +158,8 @@ An explicit grouping such as `by=("model_id", "dataset_sha256")` is allowed,
 but every group must still satisfy compatibility checks and contain its baseline.
 For custom filtering, retain the matching baseline rows. Inspect unmatched counts
 before interpreting a filtered comparison.
+
+## Additional uncertainty analysis
+
+See [repeated-question uncertainty](clustered-uncertainty.md) for opt-in
+question-cluster intervals and their assumptions.
